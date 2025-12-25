@@ -10,6 +10,12 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT=${WEB_PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_USER=${MYSQL_USER}
+      - DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - DATABASE_NAME=${MYSQL_DATABASE}
+      - DATABASE_HOST=${DB_HOST}
+      - DATABASE_PORT=${DB_PORT}
     depends_on:
       - db
       - s3mock

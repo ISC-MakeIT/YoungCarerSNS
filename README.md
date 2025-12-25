@@ -1,11 +1,6 @@
 # YoungCarerSNS
 
 ## 環境構築
-ローカルにnpmがあれば、Supabase localが立てられます。
-```bash
-npx supabase start
-```
-
 `example.env`をコピーして`.env`ファイルを作成し、必要に応じてdiscordに貼ってある環境変数などを設定します。
 ```bash
 cp example.env .env

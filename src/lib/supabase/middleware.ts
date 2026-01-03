@@ -1,0 +1,58 @@
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
+
+export async function updateSession(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({
+    request,
+  })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          supabaseResponse = NextResponse.next({
+            request,
+          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  // ユーザー情報を取得
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const url = request.nextUrl.clone()
+
+  // 1. ログインしていない場合、(auth) 配下のページへのアクセスを /login にリダイレクト
+  // (auth) はルートグループなので、実際のパスには含まれないが、
+  // ここでは /home など、認証が必要な具体的なパスをチェックする
+  const protectedPaths = ['/home'] 
+  const isProtectedPath = protectedPaths.some(path => url.pathname.startsWith(path))
+
+  if (!user && isProtectedPath) {
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
+  // 2. 既にログインしている場合、/login または /register へのアクセスを /home にリダイレクト
+  const authPaths = ['/login', '/register']
+  const isAuthPath = authPaths.some(path => url.pathname === path)
+
+  if (user && isAuthPath) {
+    url.pathname = '/home'
+    return NextResponse.redirect(url)
+  }
+
+  return supabaseResponse
+}

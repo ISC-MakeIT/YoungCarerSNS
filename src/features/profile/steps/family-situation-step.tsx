@@ -1,9 +1,9 @@
 "use client"
 
 import { useFormContext } from "react-hook-form";
-import { StepContainer } from "../../../components/step-container";
-import { FormField } from "../../../components/form-field";
-import { VisibilityToggle } from "../../../components/visibility-toggle";
+import { StepContainer } from "../../../components/ui/step-container";
+import { FormField } from "../../../components/ui/form-field";
+import { VisibilityToggle } from "../../../components/ui/visibility-toggle";
 
 const FamilySituationStep = () => {
     const { register } = useFormContext();

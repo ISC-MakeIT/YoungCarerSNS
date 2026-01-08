@@ -1,9 +1,9 @@
 "use client"
 
 import { useFormContext } from "react-hook-form";
-import { StepContainer } from "../../../components/step-container";
-import { SelectionCard } from "../../../components/selection-card";
-import { VisibilityToggle } from "../../../components/visibility-toggle";
+import { StepContainer } from "../../../components/ui/step-container";
+import { SelectionCard } from "../../../components/ui/selection-card";
+import { VisibilityToggle } from "../../../components/ui/visibility-toggle";
 
 interface ChatStanceStepProps {
     role?: 'carer' | 'supporter';

@@ -1,5 +1,4 @@
-import { getHelpTopicMaster } from "../../profile/actions/get-help-topic-master"
-import { getChatStanceMaster } from "../../profile/actions/get-chat-stance-master"
+import { getHelpTopicMaster, getChatStanceMaster } from "../../profile/api/master"
 import { FormContainer } from "./form-container"
 
 export default async function RegisterForm() {

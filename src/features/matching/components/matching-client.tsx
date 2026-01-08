@@ -2,8 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { Avatar } from "@/components/main/avatar";
-import { Badge } from "@/components/main/badge";
+import { Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { startChat } from "../actions/start-chat";
 
 interface Profile {

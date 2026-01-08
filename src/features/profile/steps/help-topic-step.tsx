@@ -1,10 +1,10 @@
 "use client"
 
 import { useFormContext } from "react-hook-form";
-import { StepContainer } from "../../../components/step-container";
-import { FormField } from "../../../components/form-field";
-import { SelectionCard } from "../../../components/selection-card";
-import { VisibilityToggle } from "../../../components/visibility-toggle";
+import { StepContainer } from "../../../components/ui/step-container";
+import { FormField } from "../../../components/ui/form-field";
+import { SelectionCard } from "../../../components/ui/selection-card";
+import { VisibilityToggle } from "../../../components/ui/visibility-toggle";
 
 interface HelpTopicStepProps {
     role?: 'carer' | 'supporter';

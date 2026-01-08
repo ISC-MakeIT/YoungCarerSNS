@@ -1,9 +1,9 @@
 import { Search } from "lucide-react";
-import { Avatar } from "@/components/main/avatar";
-import MainLayout from "@/components/main/main-layout";
+import { Avatar } from "@/components/ui/avatar";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { getMyChatRooms, getOtherMemberProfile, getLastMessage, getUnreadCount } from "../api/chat";
 
 export default async function ChatList() {
   const supabase = await createClient();
@@ -14,48 +14,21 @@ export default async function ChatList() {
   }
 
   // 自分が参加しているルームを取得
-  const { data: myRooms } = await supabase
-    .from("room_members")
-    .select("room_id, last_read_at")
-    .eq("user_id", user.id);
+  const { data: myRooms } = await getMyChatRooms(user.id);
 
   const roomIds = myRooms?.map(r => r.room_id) || [];
 
   // 各ルームの最新メッセージと相手のプロフィールを取得
-  // 本来はもっと効率的なクエリが必要だが、ここでは分かりやすさ優先で実装
   const chatListData = await Promise.all(roomIds.map(async (roomId) => {
-    // 相手のメンバー情報を取得
-    const { data: otherMember } = await supabase
-      .from("room_members")
-      .select("user_id")
-      .eq("room_id", roomId)
-      .neq("user_id", user.id)
-      .single();
-
     // 相手のプロフィールを取得
-    const { data: profile } = otherMember ? await supabase
-      .from("profiles")
-      .select("display_name, icon_url")
-      .eq("id", otherMember.user_id)
-      .single() : { data: null };
+    const { data: profile } = await getOtherMemberProfile(roomId, user.id);
 
     // 最新メッセージを取得
-    const { data: lastMessage } = await supabase
-      .from("messages")
-      .select("content, created_at")
-      .eq("room_id", roomId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
+    const { data: lastMessage } = await getLastMessage(roomId);
 
-    // 未読数をカウント（簡易版：自分の last_read_at より後のメッセージ数）
+    // 未読数をカウント
     const myMemberInfo = myRooms?.find(r => r.room_id === roomId);
-    const { count: unreadCount } = await supabase
-      .from("messages")
-      .select("*", { count: "exact", head: true })
-      .eq("room_id", roomId)
-      .neq("sender_id", user.id)
-      .gt("created_at", myMemberInfo?.last_read_at || '1970-01-01');
+    const { count: unreadCount } = await getUnreadCount(roomId, user.id, myMemberInfo?.last_read_at || null);
 
     return {
       id: roomId,
@@ -67,9 +40,8 @@ export default async function ChatList() {
   }));
 
   return (
-    <MainLayout title="チャット">
-      <div className="flex flex-col h-full">
-        {/* 検索バー */}
+    <div className="flex flex-col h-full bg-white">
+      {/* 検索バー */}
         <div className="p-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -112,8 +84,7 @@ export default async function ChatList() {
               チャットがまだありません
             </div>
           )}
-        </div>
       </div>
-    </MainLayout>
+    </div>
   );
 }

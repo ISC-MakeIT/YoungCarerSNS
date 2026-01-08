@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { FormHeader } from "@/features/register/components/form-header";
 import { FormFooter } from "@/features/register/components/form-footer";
-import { FormField } from "@/components/form-field";
+import { FormField } from "@/components/ui/form-field";
 import { submitForm } from "../actions/submit-form";
 import { useRouter } from "next/navigation";
 

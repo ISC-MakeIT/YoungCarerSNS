@@ -1,8 +1,8 @@
 "use client"
 
 import { useFormContext } from "react-hook-form";
-import { StepContainer } from "../../../components/step-container";
-import { FormField } from "../../../components/form-field";
+import { StepContainer } from "../../../components/ui/step-container";
+import { FormField } from "../../../components/ui/form-field";
 
 const EmailStep = () => {
     const { register, formState: { errors } } = useFormContext();

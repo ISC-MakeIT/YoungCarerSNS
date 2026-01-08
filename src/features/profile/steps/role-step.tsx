@@ -1,8 +1,8 @@
 "use client"
 
 import { useFormContext } from "react-hook-form";
-import { StepContainer } from "../../../components/step-container";
-import { SelectionCard } from "../../../components/selection-card";
+import { StepContainer } from "../../../components/ui/step-container";
+import { SelectionCard } from "../../../components/ui/selection-card";
 
 interface RoleStepProps {
     setRole: (role: 'carer' | 'supporter') => void;

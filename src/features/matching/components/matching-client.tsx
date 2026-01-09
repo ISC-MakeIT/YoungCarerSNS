@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -20,13 +21,17 @@ interface MatchingClientProps {
 }
 
 export default function MatchingClient({ profiles }: MatchingClientProps) {
+  const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const handleStartChat = (userId: string) => {
     startTransition(async () => {
       try {
-        await startChat(userId);
+        const result = await startChat(userId);
+        if (result?.roomId) {
+          router.push(`/chat/${result.roomId}`);
+        }
       } catch (error) {
         console.error(error);
         alert("チャットの開始に失敗しました");

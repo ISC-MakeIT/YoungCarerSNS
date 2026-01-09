@@ -9,10 +9,19 @@ interface ChatClientProps {
   roomId: string;
   initialMessages: Message[];
   currentUserId: string;
+  currentUserRole: string | null;
   otherPartyName: string;
+  otherPartyRole: string | null;
 }
 
-export default function ChatClient({ roomId, initialMessages, currentUserId, otherPartyName }: ChatClientProps) {
+export default function ChatClient({ 
+  roomId, 
+  initialMessages, 
+  currentUserId, 
+  currentUserRole,
+  otherPartyName,
+  otherPartyRole
+}: ChatClientProps) {
   const { messages, send, scrollRef } = useChat(roomId, initialMessages);
 
   return (
@@ -23,7 +32,12 @@ export default function ChatClient({ roomId, initialMessages, currentUserId, oth
         otherPartyName={otherPartyName} 
         scrollRef={scrollRef} 
       />
-      <MessageInput onSend={send} />
+      <MessageInput 
+        onSend={send} 
+        showRequestButton={currentUserRole === "carer" && otherPartyRole === "supporter"}
+        otherPartyName={otherPartyName}
+        roomId={roomId}
+      />
     </div>
   );
 }

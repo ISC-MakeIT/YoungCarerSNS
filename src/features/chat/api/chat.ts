@@ -23,7 +23,7 @@ export async function getOtherMemberProfile(roomId: string, userId: string) {
 
   return await supabase
     .from("profiles")
-    .select("display_name, icon_url")
+    .select("display_name, icon_url, role")
     .eq("id", otherMember.user_id)
     .single();
 }

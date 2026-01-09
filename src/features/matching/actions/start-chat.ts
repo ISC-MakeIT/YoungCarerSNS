@@ -21,7 +21,7 @@ export async function startChat(otherUserId: string) {
   const roomIds = existingRooms.map(r => r.room_id);
 
   if (roomIds.length > 0) {
-    const { data: commonRoom, error: commonError } = await supabase
+    const { data: commonRoom } = await supabase
       .from("room_members")
       .select("room_id")
       .in("room_id", roomIds)
@@ -29,7 +29,7 @@ export async function startChat(otherUserId: string) {
       .maybeSingle();
 
     if (commonRoom) {
-      redirect(`/chat/${commonRoom.room_id}`);
+      return { roomId: commonRoom.room_id };
     }
   }
 
@@ -52,5 +52,5 @@ export async function startChat(otherUserId: string) {
 
   if (membersError) throw membersError;
 
-  redirect(`/chat/${newRoom.id}`);
+  return { roomId: newRoom.id };
 }

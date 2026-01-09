@@ -14,6 +14,7 @@ export async function sendMessage(roomId: string, content: string) {
       room_id: roomId,
       sender_id: user.id,
       content: content,
+      type: "text"
     });
 
   if (error) {

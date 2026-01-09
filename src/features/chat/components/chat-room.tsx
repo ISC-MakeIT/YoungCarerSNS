@@ -44,6 +44,7 @@ export default async function ChatRoom({ roomId }: ChatRoomProps) {
         initialMessages={messages || []}
         currentUserId={user.id}
         currentUserRole={profile?.role || null}
+        otherPartyId={otherProfile?.id || ""}
         otherPartyName={otherProfile?.display_name || "匿名ユーザー"}
         otherPartyRole={otherProfile?.role || null}
       />

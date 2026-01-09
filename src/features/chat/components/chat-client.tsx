@@ -10,6 +10,7 @@ interface ChatClientProps {
   initialMessages: Message[];
   currentUserId: string;
   currentUserRole: string | null;
+  otherPartyId: string;
   otherPartyName: string;
   otherPartyRole: string | null;
 }
@@ -19,6 +20,7 @@ export default function ChatClient({
   initialMessages, 
   currentUserId, 
   currentUserRole,
+  otherPartyId,
   otherPartyName,
   otherPartyRole
 }: ChatClientProps) {
@@ -33,10 +35,12 @@ export default function ChatClient({
         scrollRef={scrollRef} 
       />
       <MessageInput 
+        roomId={roomId}
         onSend={send} 
         showRequestButton={currentUserRole === "carer" && otherPartyRole === "supporter"}
+        currentUserId={currentUserId}
+        otherPartyId={otherPartyId}
         otherPartyName={otherPartyName}
-        roomId={roomId}
       />
     </div>
   );

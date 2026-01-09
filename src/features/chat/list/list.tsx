@@ -30,10 +30,22 @@ export default async function ChatList() {
     const myMemberInfo = myRooms?.find(r => r.room_id === roomId);
     const { count: unreadCount } = await getUnreadCount(roomId, user.id, myMemberInfo?.last_read_at || null);
 
+    // 最新メッセージの表示用テキスト
+    let displayLastMessage = "メッセージはありません";
+    if (lastMessage) {
+      if (lastMessage.type === "support" && lastMessage.supports) {
+        // supportsが配列で返る場合がある（単一でもselect("supports(...)")だと配列になるケースがあるため）
+        const support = Array.isArray(lastMessage.supports) ? lastMessage.supports[0] : lastMessage.supports;
+        displayLastMessage = `[サポート依頼] ${support?.request_body || lastMessage.content}`;
+      } else {
+        displayLastMessage = lastMessage.content || "メッセージ内容なし";
+      }
+    }
+
     return {
       id: roomId,
       name: profile?.display_name || "匿名ユーザー",
-      lastMessage: lastMessage?.content || "メッセージはありません",
+      lastMessage: displayLastMessage,
       time: lastMessage ? new Date(lastMessage.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
       unread: unreadCount || 0,
     };

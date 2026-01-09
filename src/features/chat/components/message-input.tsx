@@ -5,13 +5,22 @@ import { Send, CalendarDays } from "lucide-react";
 import { RequestPopup } from "../../request-support/components/popup";
 
 interface MessageInputProps {
+  roomId: string;
   onSend: (content: string) => Promise<void>;
   showRequestButton?: boolean;
+  currentUserId: string;
+  otherPartyId: string;
   otherPartyName: string;
-  roomId: string;
 }
 
-export function MessageInput({ onSend, showRequestButton, otherPartyName, roomId }: MessageInputProps) {
+export function MessageInput({ 
+  roomId,
+  onSend, 
+  showRequestButton, 
+  currentUserId,
+  otherPartyId,
+  otherPartyName 
+}: MessageInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -72,6 +81,9 @@ export function MessageInput({ onSend, showRequestButton, otherPartyName, roomId
         <RequestPopup 
           onClose={() => setShowPopup(false)} 
           supporterName={otherPartyName} 
+          roomId={roomId}
+          carerId={currentUserId}
+          supporterId={otherPartyId}
         />
       )}
     </>

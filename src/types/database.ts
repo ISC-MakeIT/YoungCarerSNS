@@ -130,6 +130,50 @@ export interface Database {
           last_read_at?: string | null
         }
       }
+      supports: {
+        Row: {
+          id: string
+          room_id: string | null
+          carer_id: string | null
+          supporter_id: string | null
+          status: 'pending' | 'accepted' | 'ongoing' | 'completed' | 'cancelled' | 'rejected' | null
+          start_at: string | null
+          end_at: string | null
+          started_at: string | null
+          completed_at: string | null
+          request_body: string | null
+          request_note: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          room_id?: string | null
+          carer_id?: string | null
+          supporter_id?: string | null
+          status?: 'pending' | 'accepted' | 'ongoing' | 'completed' | 'cancelled' | 'rejected' | null
+          start_at?: string | null
+          end_at?: string | null
+          started_at?: string | null
+          completed_at?: string | null
+          request_body?: string | null
+          request_note?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          room_id?: string | null
+          carer_id?: string | null
+          supporter_id?: string | null
+          status?: 'pending' | 'accepted' | 'ongoing' | 'completed' | 'cancelled' | 'rejected' | null
+          start_at?: string | null
+          end_at?: string | null
+          started_at?: string | null
+          completed_at?: string | null
+          request_body?: string | null
+          request_note?: string | null
+          created_at?: string | null
+        }
+      }
       messages: {
         Row: {
           id: string

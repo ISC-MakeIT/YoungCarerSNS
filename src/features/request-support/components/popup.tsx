@@ -1,17 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
+import { createSupport } from "../actions/create-support";
 
 interface RequestPopupProps {
   onClose: () => void;
   supporterName: string;
+  roomId: string;
+  carerId: string;
+  supporterId: string;
 }
 
 type Step = "input" | "confirm";
 
-export function RequestPopup({ onClose, supporterName }: RequestPopupProps) {
+export function RequestPopup({ onClose, supporterName, roomId, carerId, supporterId }: RequestPopupProps) {
   const [step, setStep] = useState<Step>("input");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     content: "",
     startTime: "",
@@ -33,10 +38,24 @@ export function RequestPopup({ onClose, supporterName }: RequestPopupProps) {
     }
   };
 
-  const handleSend = () => {
-    // 実際の送信処理は後ほど実装
-    alert("送信しました（モック）");
-    onClose();
+  const handleSend = async () => {
+    setIsSubmitting(true);
+    try {
+      await createSupport({
+        roomId,
+        carerId,
+        supporterId,
+        content: formData.content,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        note: formData.note,
+      });
+      onClose();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "送信に失敗しました");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -151,13 +170,22 @@ export function RequestPopup({ onClose, supporterName }: RequestPopupProps) {
               <div className="pt-6 space-y-3">
                 <button
                   onClick={handleSend}
-                  className="w-full py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center disabled:opacity-50"
                 >
-                  送信する
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="animate-spin mr-2" size={20} />
+                      送信中...
+                    </>
+                  ) : (
+                    "送信する"
+                  )}
                 </button>
                 <button
                   onClick={() => setStep("input")}
-                  className="w-full py-4 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50"
                 >
                   修正する
                 </button>

@@ -2,6 +2,7 @@
 
 import { Avatar } from "@/components/ui/avatar";
 import { Message } from "../types";
+import { SupportCard } from "./support-card";
 
 interface MessageListProps {
   messages: Message[];
@@ -18,6 +19,8 @@ export function MessageList({ messages, currentUserId, otherPartyName, scrollRef
     >
       {messages.map((message) => {
         const isMine = message.sender_id === currentUserId;
+        const isSupport = message.type === "support";
+
         return (
           <div
             key={message.id}
@@ -33,15 +36,26 @@ export function MessageList({ messages, currentUserId, otherPartyName, scrollRef
                 {!isMine && (
                   <p className="text-[10px] text-gray-500 mb-1 ml-1">{otherPartyName}</p>
                 )}
-                <div
-                  className={`px-4 py-2 rounded-2xl text-sm ${
-                    isMine
-                      ? "bg-blue-600 text-white rounded-tr-none"
-                      : "bg-gray-100 text-gray-800 rounded-tl-none"
-                  }`}
-                >
-                  {message.content}
-                </div>
+                {isSupport ? (
+                  <SupportCard 
+                    support={
+                      message.supports 
+                        ? (Array.isArray(message.supports) ? message.supports[0] : message.supports)
+                        : null
+                    } 
+                    isMine={isMine}
+                  />
+                ) : (
+                  <div
+                    className={`px-4 py-2 rounded-2xl text-sm ${
+                      isMine
+                        ? "bg-blue-600 text-white rounded-tr-none"
+                        : "bg-gray-100 text-gray-800 rounded-tl-none"
+                    }`}
+                  >
+                    {message.content}
+                  </div>
+                )}
                 <p className={`text-[10px] text-gray-400 mt-1 ${isMine ? "text-right mr-1" : "ml-1"}`}>
                   {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>

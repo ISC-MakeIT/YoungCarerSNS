@@ -8,3 +8,4 @@ export { default as ChatStanceStep } from './chat-stance-step';
 export { default as FamilySituationStep } from './family-situation-step';
 export { default as CareExperienceStep } from './care-experience-step';
 export { default as LearningBackgroundStep } from './learning-background-step';
+export { default as BioStep } from './bio-step';

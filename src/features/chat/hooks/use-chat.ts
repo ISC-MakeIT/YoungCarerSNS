@@ -31,12 +31,45 @@ export function useChat(roomId: string, initialMessages: Message[]) {
           table: "messages",
           filter: `room_id=eq.${roomId}`,
         },
-        (payload) => {
+        async (payload) => {
           const newMessage = payload.new as Message;
+          
+          // サポートメッセージの場合、詳細情報を取得
+          if (newMessage.type === "support" && newMessage.support_id) {
+            const { data: support } = await supabase
+              .from("supports")
+              .select("*")
+              .eq("id", newMessage.support_id)
+              .single();
+            
+            if (support) {
+              newMessage.supports = support;
+            }
+          }
+
           setMessages((prev) => {
             if (prev.find((m) => m.id === newMessage.id)) return prev;
             return [...prev, newMessage];
           });
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "supports",
+          filter: `room_id=eq.${roomId}`,
+        },
+        (payload) => {
+          const updatedSupport = payload.new;
+          setMessages((prev) => 
+            prev.map((msg) => 
+              msg.support_id === updatedSupport.id 
+                ? { ...msg, supports: updatedSupport } 
+                : msg
+            )
+          );
         }
       )
       .subscribe();

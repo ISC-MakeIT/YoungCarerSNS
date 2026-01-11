@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Send, CalendarDays } from "lucide-react";
-import { RequestPopup } from "../../request-support/components/popup";
+import { RequestPopup } from "../../support/components/popup";
 
 interface MessageInputProps {
   roomId: string;

@@ -26,13 +26,13 @@ export function MessageList({ messages, currentUserId, otherPartyName, scrollRef
             key={message.id}
             className={`flex ${isMine ? "justify-end" : "justify-start"}`}
           >
-            <div className={`flex max-w-[80%] ${isMine ? "flex-row-reverse" : "flex-row"}`}>
+            <div className={`flex ${isSupport ? "max-w-[90%]" : "max-w-[80%]"} ${isMine ? "flex-row-reverse" : "flex-row"}`}>
               {!isMine && (
                 <div className="mr-2 mt-1 shrink-0">
                   <Avatar className="w-8 h-8" />
                 </div>
               )}
-              <div>
+              <div className={isSupport ? "flex-1 min-w-[300px]" : ""}>
                 {!isMine && (
                   <p className="text-[10px] text-gray-500 mb-1 ml-1">{otherPartyName}</p>
                 )}
@@ -44,6 +44,7 @@ export function MessageList({ messages, currentUserId, otherPartyName, scrollRef
                         : null
                     } 
                     isMine={isMine}
+                    roomId={message.room_id || ""}
                   />
                 ) : (
                   <div

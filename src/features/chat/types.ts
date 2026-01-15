@@ -14,5 +14,8 @@ export interface Message {
     end_at: string | null;
     request_note: string | null;
     status: string | null;
+    carer_id: string | null;
+    supporter_id: string | null;
+    reviews?: { id: string }[];
   } | null;
 }

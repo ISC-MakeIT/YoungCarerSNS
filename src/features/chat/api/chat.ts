@@ -50,7 +50,17 @@ export async function getMessages(roomId: string) {
   if (supportIds.length > 0) {
     const { data: supports } = await supabase
       .from("supports")
-      .select("id, request_body, start_at, end_at, request_note, status")
+      .select(`
+        id, 
+        request_body, 
+        start_at, 
+        end_at, 
+        request_note, 
+        status,
+        carer_id,
+        supporter_id,
+        reviews(id)
+      `)
       .in("id", supportIds);
 
     if (supports) {

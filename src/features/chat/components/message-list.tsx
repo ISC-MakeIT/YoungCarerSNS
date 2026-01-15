@@ -45,6 +45,7 @@ export function MessageList({ messages, currentUserId, otherPartyName, scrollRef
                     } 
                     isMine={isMine}
                     roomId={message.room_id || ""}
+                    currentUserId={currentUserId}
                   />
                 ) : (
                   <div

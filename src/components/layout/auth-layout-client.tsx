@@ -11,6 +11,8 @@ export default function AuthLayoutClient({ children }: { children: React.ReactNo
   const pathname = usePathname();
   const { title, setTitle } = useTitle();
 
+  const isChatRoom = pathname?.includes("/chat/") && pathname !== "/chat";
+
   const navItems = [
     { href: "/home", label: "ホーム", icon: Home },
     { href: "/matching", label: "マッチング", icon: Users },
@@ -25,19 +27,19 @@ export default function AuthLayoutClient({ children }: { children: React.ReactNo
   }, [pathname, setTitle]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <header className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+      <header className="flex-none bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <h1 className="text-lg font-bold text-gray-800">{title}</h1>
         <Link href="/profile/edit">
           <Avatar className="w-8 h-8 pointer-events-none" />
         </Link>
       </header>
 
-      <main className="flex-1 pb-20">
+      <main className={`flex-1 ${isChatRoom ? "overflow-hidden" : "overflow-y-auto"} relative overscroll-none`}>
         {children}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 px-4 z-10">
+      <nav className="flex-none bg-white border-t border-gray-200 flex justify-around items-center py-2 px-4 z-10">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;

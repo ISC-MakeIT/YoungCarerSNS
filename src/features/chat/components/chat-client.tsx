@@ -27,7 +27,7 @@ export default function ChatClient({
   const { messages, send, scrollRef } = useChat(roomId, initialMessages);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-120px)] bg-white">
+    <div className="flex flex-col h-full bg-white">
       <MessageList 
         messages={messages} 
         currentUserId={currentUserId} 

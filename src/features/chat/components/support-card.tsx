@@ -1,8 +1,9 @@
 "use client";
 
-import { Calendar, Clock, Info, Check, X, Play, Ban } from "lucide-react";
+import { Calendar, Clock, Info, Check, X, Play, Ban, Star } from "lucide-react";
 import { updateSupportStatus } from "@/features/support/actions/update-support-status";
 import { useState } from "react";
+import { ReviewPopup } from "@/features/review/components/popup";
 
 interface SupportCardProps {
   support: {
@@ -12,14 +13,22 @@ interface SupportCardProps {
     end_at: string | null;
     request_note: string | null;
     status: string | null;
+    supporter_id: string | null;
+    carer_id: string | null;
+    reviews?: { id: string }[];
   } | null;
   isMine: boolean;
   roomId: string;
+  currentUserId: string;
 }
 
-export function SupportCard({ support, isMine, roomId }: SupportCardProps) {
+export function SupportCard({ support, isMine, roomId, currentUserId }: SupportCardProps) {
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showReviewPopup, setShowReviewPopup] = useState(false);
+  const [isReviewedLocally, setIsReviewedLocally] = useState(false);
   if (!support) return null;
+
+  const hasReview = (support.reviews && support.reviews.length > 0) || isReviewedLocally;
 
   const STATUS_LABELS: Record<string, string> = {
     pending: "メッセージ確認中",
@@ -93,6 +102,18 @@ export function SupportCard({ support, isMine, roomId }: SupportCardProps) {
           >
             <Check size={14} />
             完了
+          </button>
+        );
+      }
+      if (support.status === "completed" && !hasReview) {
+        buttons.push(
+          <button
+            key="review"
+            onClick={() => setShowReviewPopup(true)}
+            className="flex-1 flex items-center justify-center gap-1 bg-yellow-500 text-white py-2 px-3 rounded-xl font-bold text-xs hover:bg-yellow-600 transition-colors"
+          >
+            <Star size={14} />
+            レビューを書く
           </button>
         );
       }
@@ -190,6 +211,17 @@ export function SupportCard({ support, isMine, roomId }: SupportCardProps) {
 
         {renderActions()}
       </div>
+
+      {showReviewPopup && (
+        <ReviewPopup
+          onClose={() => setShowReviewPopup(false)}
+          onSuccess={() => setIsReviewedLocally(true)}
+          supportId={support.id}
+          supporterId={support.supporter_id || ""}
+          reviewerId={currentUserId}
+          roomId={roomId}
+        />
+      )}
     </div>
   );
 }

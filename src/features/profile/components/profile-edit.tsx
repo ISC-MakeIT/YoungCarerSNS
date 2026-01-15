@@ -14,8 +14,8 @@ import {
 } from "../steps";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "../actions/update-profile";
+import { logout } from "../actions/logout";
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 
 interface ProfileEditProps {
     initialData: any;
@@ -64,10 +64,7 @@ export const ProfileEdit = ({ initialData, masters }: ProfileEditProps) => {
 
     const handleLogout = async () => {
         if (confirm("ログアウトしますか？")) {
-            const supabase = createClient();
-            await supabase.auth.signOut();
-            router.push("/login");
-            router.refresh();
+            await logout();
         }
     };
 

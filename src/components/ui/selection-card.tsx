@@ -31,7 +31,7 @@ export const SelectionCard = ({
     };
 
     return (
-        <label className={`flex items-center p-4 border-2 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group ${className}`}>
+        <label className={`flex items-center py-3 px-4 border rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 group ${className}`}>
             <input 
                 type={type} 
                 {...rest}

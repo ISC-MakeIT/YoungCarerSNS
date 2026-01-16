@@ -1,13 +1,13 @@
 "use client"
 
 import { FormProvider, useForm } from "react-hook-form"
-import { useState, useCallback } from "react"
-import { useFormNavigation } from "../hooks/use-form-navigation"
+import { useState, useCallback, useEffect } from "react"
+import { useFormNavigation, Role } from "../hooks/use-form-navigation"
 import { FormHeader } from "./form-header"
 import { FormStepRender } from "./form-step-render"
 import { FormFooter } from "./form-footer"
 import { submitForm } from "../actions/submit-form"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 interface FormContainerProps {
     masters: {
@@ -17,11 +17,15 @@ interface FormContainerProps {
 }
 
 export function FormContainer({ masters }: FormContainerProps) {
+    const searchParams = useSearchParams();
+    const queryRole = searchParams.get('role') as Role;
+    const initialRole = queryRole === 'supporter' ? 'supporter' : 'carer';
+
     const methods = useForm({
         defaultValues: {
             email: "",
             password: "",
-            role: "",
+            role: initialRole,
             displayName: "",
             prefecture: "",
             city: "",
@@ -49,7 +53,16 @@ export function FormContainer({ masters }: FormContainerProps) {
         setRole, 
         title,
         isLastStep
-    } = useFormNavigation();
+    } = useFormNavigation(initialRole);
+
+    // 同期を保つために useEffect を使用（または setRole をラップする）
+    // values.role が React Hook Form 側で変更されたときに hook 側の state も更新する必要がある
+    const watchedRole = methods.watch("role") as Role;
+    useEffect(() => {
+        if (watchedRole && watchedRole !== role) {
+            setRole(watchedRole);
+        }
+    }, [watchedRole, role, setRole]);
 
     const router = useRouter();
 

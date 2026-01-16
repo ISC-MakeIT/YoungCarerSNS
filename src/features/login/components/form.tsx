@@ -67,7 +67,7 @@ export function LoginForm() {
                     </div>
                 </main>
 
-                <FormFooter onNext={methods.handleSubmit(onSubmit)} isLastStep={true} isLoading={isLoading} />
+                <FormFooter onNext={methods.handleSubmit(onSubmit)} isLastStep={true} isLoading={isLoading} label="ログイン" />
             </form>
         </FormProvider>
     );

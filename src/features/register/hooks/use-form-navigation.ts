@@ -3,9 +3,9 @@ import * as steps from '../../profile/steps';
 
 export type Role = 'carer' | 'supporter';
 
-export function useFormNavigation() {
+export function useFormNavigation(initialRole?: Role) {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
-    const [role, setRole] = useState<Role | null>(null);
+    const [role, setRole] = useState<Role>(initialRole || 'carer');
 
     const getSteps = () => {
         const common = [

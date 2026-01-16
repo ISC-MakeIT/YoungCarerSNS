@@ -4,9 +4,10 @@ interface FormFooterProps {
     onNext: () => void;
     isLastStep: boolean;
     isLoading?: boolean;
+    label?: string;
 }
 
-export function FormFooter({ onNext, isLastStep, isLoading }: FormFooterProps) {
+export function FormFooter({ onNext, isLastStep, isLoading, label }: FormFooterProps) {
     return (
         <footer className="p-4 border-t bg-white sticky bottom-0">
             <button
@@ -14,7 +15,7 @@ export function FormFooter({ onNext, isLastStep, isLoading }: FormFooterProps) {
                 disabled={isLoading}
                 className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors disabled:opacity-50"
             >
-                {isLoading ? "送信中..." : isLastStep ? "はじめる" : "次へ"}
+                {isLoading ? "送信中..." : label || (isLastStep ? "はじめる" : "次へ")}
             </button>
         </footer>
     );

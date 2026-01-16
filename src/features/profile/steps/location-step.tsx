@@ -10,12 +10,13 @@ interface LocationStepProps {
 
 const LocationStep = ({ role }: LocationStepProps) => {
     const { register, formState: { errors } } = useFormContext();
+    const isRequired = role !== "carer";
 
     return (
-        <StepContainer description="お住まいの地域を教えてください。">
+        <StepContainer description={`お住まいの地域を教えてください。${!isRequired ? "（任意）" : ""}`}>
             <FormField label="都道府県" name="prefecture" error={errors.prefecture}>
                 <select 
-                    {...register("prefecture", { required: "都道府県を選択してください" })} 
+                    {...register("prefecture", { required: isRequired ? "都道府県を選択してください" : false })} 
                     className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 >
                     <option value="">選択してください</option>
@@ -27,7 +28,7 @@ const LocationStep = ({ role }: LocationStepProps) => {
             <FormField label="市区町村" name="city" error={errors.city}>
                 <input 
                     type="text" 
-                    {...register("city", { required: "市区町村を入力してください" })} 
+                    {...register("city", { required: isRequired ? "市区町村を入力してください" : false })} 
                     placeholder="例：横浜市中区" 
                     className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />

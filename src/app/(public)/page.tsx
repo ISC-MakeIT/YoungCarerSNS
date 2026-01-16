@@ -8,7 +8,7 @@ export default function LandingPage() {
             <li><Link href="login">ログインする</Link></li>
             <li><Link href="register">初めての方はこちら</Link></li>
             <li><Link href="reflection">振り返る</Link></li>
-            <li><Link href="register">サポートを始める</Link></li>
+            <li><Link href="register?role=supporter">サポートを始める</Link></li>
             </ul>
         </main>
     )

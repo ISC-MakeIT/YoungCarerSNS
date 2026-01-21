@@ -6,24 +6,33 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { startChat } from "../actions/start-chat";
+import type { HelpTopicMaster } from "../../profile/types";
 
 interface Profile {
   id: string;
   display_name: string | null;
   role: string | null;
   prefecture: string | null;
+  city: string | null;
   bio: string | null;
   help_topics: string[] | null;
 }
 
 interface MatchingClientProps {
   profiles: Profile[];
+  helpTopicMaster: HelpTopicMaster[];
 }
 
-export default function MatchingClient({ profiles }: MatchingClientProps) {
+export default function MatchingClient({ profiles, helpTopicMaster }: MatchingClientProps) {
   const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const getHelpTopicLabel = (tagId: string, role: string | null) => {
+    const topic = helpTopicMaster.find(t => t.id === tagId);
+    if (!topic) return tagId;
+    return role === "supporter" ? topic.supporterLabel : topic.carerLabel;
+  };
 
   const handleStartChat = (userId: string) => {
     startTransition(async () => {
@@ -41,8 +50,6 @@ export default function MatchingClient({ profiles }: MatchingClientProps) {
 
   return (
     <div className="p-4 space-y-4">
-      <p className="text-sm text-gray-600 px-1">あなたに似た境遇の方が見つかりました</p>
-      
       <div className="space-y-3">
         {profiles.length > 0 ? (
           profiles.map((profile) => (
@@ -57,7 +64,7 @@ export default function MatchingClient({ profiles }: MatchingClientProps) {
                     <div>
                       <h3 className="font-bold text-gray-900">{profile.display_name || "匿名ユーザー"}</h3>
                       <p className="text-xs text-gray-500">
-                        {profile.role === "carer" ? "ヤングケアラー" : "サポーター"} / {profile.prefecture || "地域未設定"}
+                        {profile.role === "carer" ? "一般" : "サポーター"} / {profile.prefecture || "地域未設定"}{profile.city && ` ${profile.city}`}
                       </p>
                     </div>
                     <button
@@ -70,7 +77,7 @@ export default function MatchingClient({ profiles }: MatchingClientProps) {
                   
                   <div className="mt-2 flex flex-wrap gap-1">
                     {profile.help_topics?.map((tag) => (
-                      <Badge key={tag}>#{tag}</Badge>
+                      <Badge key={tag}>#{getHelpTopicLabel(tag, profile.role)}</Badge>
                     ))}
                   </div>
 

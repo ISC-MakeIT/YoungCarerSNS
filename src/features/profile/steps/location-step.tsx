@@ -20,7 +20,7 @@ const LocationStep = ({ role }: LocationStepProps) => {
                     className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 >
                     <option value="">選択してください</option>
-                    <option value="神奈川">神奈川県</option>
+                    <option value="神奈川県">神奈川県</option>
                     {/* 他の都道府県を追加 */}
                 </select>
             </FormField>

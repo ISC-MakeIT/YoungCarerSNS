@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -58,15 +59,17 @@ export default function MatchingClient({ profiles, helpTopicMaster }: MatchingCl
               className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
             >
               <div className="p-4 flex items-start space-x-3">
-                <Avatar className="w-12 h-12" />
+                <Link href={`/profile/${profile.id}`}>
+                  <Avatar className="w-12 h-12 hover:opacity-80 transition-opacity" />
+                </Link>
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
-                    <div>
+                    <Link href={`/profile/${profile.id}`} className="hover:underline">
                       <h3 className="font-bold text-gray-900">{profile.display_name || "匿名ユーザー"}</h3>
                       <p className="text-xs text-gray-500">
                         {profile.role === "carer" ? "一般" : "サポーター"} / {profile.prefecture || "地域未設定"}{profile.city && ` ${profile.city}`}
                       </p>
-                    </div>
+                    </Link>
                     <button
                       onClick={() => setExpandedId(expandedId === profile.id ? null : profile.id)}
                       className="text-gray-400 hover:text-gray-600"
@@ -77,7 +80,7 @@ export default function MatchingClient({ profiles, helpTopicMaster }: MatchingCl
                   
                   <div className="mt-2 flex flex-wrap gap-1">
                     {profile.help_topics?.map((tag) => (
-                      <Badge key={tag}>#{getHelpTopicLabel(tag, profile.role)}</Badge>
+                      <Badge key={tag}>{getHelpTopicLabel(tag, profile.role)}</Badge>
                     ))}
                   </div>
 

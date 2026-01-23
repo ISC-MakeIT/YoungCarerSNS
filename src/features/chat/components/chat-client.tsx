@@ -1,0 +1,47 @@
+"use client";
+
+import { useChat } from "../hooks/use-chat";
+import { MessageList } from "./message-list";
+import { MessageInput } from "./message-input";
+import { Message } from "../types";
+
+interface ChatClientProps {
+  roomId: string;
+  initialMessages: Message[];
+  currentUserId: string;
+  currentUserRole: string | null;
+  otherPartyId: string;
+  otherPartyName: string;
+  otherPartyRole: string | null;
+}
+
+export default function ChatClient({ 
+  roomId, 
+  initialMessages, 
+  currentUserId, 
+  currentUserRole,
+  otherPartyId,
+  otherPartyName,
+  otherPartyRole
+}: ChatClientProps) {
+  const { messages, send, scrollRef } = useChat(roomId, initialMessages);
+
+  return (
+    <div className="flex flex-col h-full bg-white">
+      <MessageList 
+        messages={messages} 
+        currentUserId={currentUserId} 
+        otherPartyName={otherPartyName} 
+        scrollRef={scrollRef} 
+      />
+      <MessageInput 
+        roomId={roomId}
+        onSend={send} 
+        showRequestButton={currentUserRole === "carer" && otherPartyRole === "supporter"}
+        currentUserId={currentUserId}
+        otherPartyId={otherPartyId}
+        otherPartyName={otherPartyName}
+      />
+    </div>
+  );
+}

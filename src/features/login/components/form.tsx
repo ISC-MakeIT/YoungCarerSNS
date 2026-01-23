@@ -46,7 +46,13 @@ export function LoginForm() {
                             <FormField label="メールアドレス" name="email" error={methods.formState.errors.email}>
                                 <input
                                     type="email"
-                                    {...methods.register("email", { required: "メールアドレスは必須です" })}
+                                    {...methods.register("email", { 
+                                        required: "メールアドレスは必須です",
+                                        pattern: {
+                                            value: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+                                            message: "有効なメールアドレスを入力してください"
+                                        }
+                                    })}
                                     className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                     placeholder="example@mail.com"
                                 />

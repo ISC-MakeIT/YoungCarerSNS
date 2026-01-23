@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { Message, Support } from "../types";
 
 export async function getRoomMembership(roomId: string, userId: string) {
   const supabase = await createClient();
@@ -31,26 +32,11 @@ export async function getOtherMemberProfile(roomId: string, userId: string) {
 export async function getMessages(roomId: string) {
   const supabase = await createClient();
   
-  // まずメッセージを取得
-  const { data: messages, error: messagesError } = await supabase
+  const { data: messages, error } = await supabase
     .from("messages")
-    .select("*")
-    .eq("room_id", roomId)
-    .order("created_at", { ascending: true });
-
-  if (messagesError || !messages) {
-    return { data: messages, error: messagesError };
-  }
-
-  // サポートタイプのメッセージがある場合、その情報を取得してマージ
-  const supportIds = messages
-    .filter(m => m.type === "support" && m.support_id)
-    .map(m => m.support_id);
-
-  if (supportIds.length > 0) {
-    const { data: supports } = await supabase
-      .from("supports")
-      .select(`
+    .select(`
+      *,
+      supports (
         id, 
         request_body, 
         start_at, 
@@ -60,19 +46,22 @@ export async function getMessages(roomId: string) {
         carer_id,
         supporter_id,
         reviews(id)
-      `)
-      .in("id", supportIds);
+      )
+    `)
+    .eq("room_id", roomId)
+    .order("created_at", { ascending: true });
 
-    if (supports) {
-      const messagesWithSupports = messages.map(m => ({
-        ...m,
-        supports: m.support_id ? supports.find(s => s.id === m.support_id) : null
-      }));
-      return { data: messagesWithSupports, error: null };
-    }
+  if (error || !messages) {
+    return { data: messages, error };
   }
 
-  return { data: messages, error: null };
+  // Supabaseの結合クエリは常に配列を返すため、単一オブジェクトに変換
+  const formattedMessages: Message[] = messages.map(m => ({
+    ...m,
+    supports: Array.isArray(m.supports) ? (m.supports[0] as unknown as Support) : (m.supports as unknown as Support)
+  }));
+
+  return { data: formattedMessages, error: null };
 }
 
 export async function updateLastRead(roomId: string, userId: string) {
@@ -96,30 +85,35 @@ export async function getLastMessage(roomId: string) {
   const supabase = await createClient();
   const { data: message, error } = await supabase
     .from("messages")
-    .select("content, created_at, sender_id, type, support_id")
+    .select(`
+      id, 
+      room_id, 
+      content, 
+      created_at, 
+      sender_id, 
+      type, 
+      support_id, 
+      image_url,
+      supports (
+        request_body
+      )
+    `)
     .eq("room_id", roomId)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
   if (error || !message) {
-    return { data: message, error };
+    return { data: null, error };
   }
 
-  if (message.type === "support" && message.support_id) {
-    const { data: support } = await supabase
-      .from("supports")
-      .select("request_body")
-      .eq("id", message.support_id)
-      .maybeSingle();
-    
-    return { 
-      data: { ...message, supports: support }, 
-      error: null 
-    };
-  }
+  // 配列で返ってくるsupportsを単一オブジェクトに整形してMessage型として返す
+  const formattedMessage: Message = {
+    ...message,
+    supports: Array.isArray(message.supports) ? (message.supports[0] as unknown as Support) : (message.supports as unknown as Support)
+  };
 
-  return { data: message, error: null };
+  return { data: formattedMessage, error: null };
 }
 
 export async function getUnreadCount(roomId: string, userId: string, lastReadAt: string | null) {

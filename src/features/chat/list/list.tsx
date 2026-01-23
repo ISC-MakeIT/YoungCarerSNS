@@ -34,9 +34,7 @@ export default async function ChatList() {
     let displayLastMessage = "メッセージはありません";
     if (lastMessage) {
       if (lastMessage.type === "support" && lastMessage.supports) {
-        // supportsが配列で返る場合がある（単一でもselect("supports(...)")だと配列になるケースがあるため）
-        const support = Array.isArray(lastMessage.supports) ? lastMessage.supports[0] : lastMessage.supports;
-        displayLastMessage = `[サポート依頼] ${support?.request_body || lastMessage.content}`;
+        displayLastMessage = `[サポート依頼] ${lastMessage.supports.request_body || lastMessage.content}`;
       } else {
         displayLastMessage = lastMessage.content || "メッセージ内容なし";
       }

@@ -38,11 +38,7 @@ export function MessageList({ messages, currentUserId, otherPartyName, scrollRef
                 )}
                 {isSupport ? (
                   <SupportCard 
-                    support={
-                      message.supports 
-                        ? (Array.isArray(message.supports) ? message.supports[0] : message.supports)
-                        : null
-                    } 
+                    support={message.supports || null} 
                     isMine={isMine}
                     roomId={message.room_id || ""}
                     currentUserId={currentUserId}

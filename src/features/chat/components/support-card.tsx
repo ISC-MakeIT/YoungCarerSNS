@@ -4,19 +4,10 @@ import { Calendar, Clock, Info, Check, X, Play, Ban, Star } from "lucide-react";
 import { updateSupportStatus } from "@/features/support/actions/update-support-status";
 import { useState } from "react";
 import { ReviewPopup } from "@/features/review/components/popup";
+import { Support } from "../types";
 
 interface SupportCardProps {
-  support: {
-    id: string;
-    request_body: string | null;
-    start_at: string | null;
-    end_at: string | null;
-    request_note: string | null;
-    status: string | null;
-    supporter_id: string | null;
-    carer_id: string | null;
-    reviews?: { id: string }[];
-  } | null;
+  support: Support | null;
   isMine: boolean;
   roomId: string;
   currentUserId: string;

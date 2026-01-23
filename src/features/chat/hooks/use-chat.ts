@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { sendMessage } from "../actions/send-message";
-import { Message } from "../types";
+import { Message, Support } from "../types";
 
 export function useChat(roomId: string, initialMessages: Message[]) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
@@ -43,7 +43,7 @@ export function useChat(roomId: string, initialMessages: Message[]) {
               .single();
             
             if (support) {
-              newMessage.supports = support;
+              newMessage.supports = support as Support;
             }
           }
 
@@ -62,14 +62,16 @@ export function useChat(roomId: string, initialMessages: Message[]) {
           filter: `room_id=eq.${roomId}`,
         },
         (payload) => {
-          const updatedSupport = payload.new;
-          setMessages((prev) => 
-            prev.map((msg) => 
-              msg.support_id === updatedSupport.id 
-                ? { ...msg, supports: updatedSupport } 
-                : msg
-            )
-          );
+          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+            const updatedSupport = payload.new as Support;
+            setMessages((prev) => 
+              prev.map((msg) => 
+                msg.support_id === updatedSupport.id 
+                  ? { ...msg, supports: updatedSupport } 
+                  : msg
+              )
+            );
+          }
         }
       )
       .subscribe();

@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, MessageCircle } from "lucide-react";
+import { Home, Users, MessageCircle, MessageSquare } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { useTitle } from "./title-context";
 
@@ -17,6 +17,7 @@ export default function AuthLayoutClient({ children }: { children: React.ReactNo
     { href: "/home", label: "ホーム", icon: Home },
     { href: "/matching", label: "マッチング", icon: Users },
     { href: "/chat", label: "チャット", icon: MessageCircle },
+    { href: "/board", label: "掲示板", icon: MessageSquare },
   ];
 
   // パスが変わるごとにデフォルトのタイトルを設定（各コンポーネントで上書き可能）
@@ -24,6 +25,7 @@ export default function AuthLayoutClient({ children }: { children: React.ReactNo
     if (pathname === "/home") setTitle("ホーム");
     else if (pathname === "/matching") setTitle("マッチング");
     else if (pathname === "/chat") setTitle("チャット");
+    else if (pathname === "/board") setTitle("掲示板");
   }, [pathname, setTitle]);
 
   return (

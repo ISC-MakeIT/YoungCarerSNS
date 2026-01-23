@@ -12,5 +12,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Mirror push
+        env:
+          TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+          USER: ${{ secrets.MIRROR_USER }}
+          REPO: ${{ secrets.MIRROR_REPO }}
         run: |
-          git push --force https://${{ secrets.PERSONAL_TOKEN }}@github.com/${{ secrets.MIRROR_USER }}/${{ secrets.MIRROR_REPO }}.git main
+          git push --force https://x-access-token:$TOKEN@github.com/$USER/$REPO.git main

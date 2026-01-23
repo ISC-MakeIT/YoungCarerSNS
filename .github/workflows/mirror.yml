@@ -1,0 +1,16 @@
+name: Mirror to Private Repo
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Mirror push
+        run: |
+          git push --force https://${{ secrets.PERSONAL_TOKEN }}@github.com/${{ secrets.MIRROR_USER }}/${{ secrets.MIRROR_REPO }}.git main

@@ -69,7 +69,7 @@ export const ProfileEdit = ({ initialData, masters }: ProfileEditProps) => {
     };
 
     const handleDeleteAccount = () => {
-        alert("アカウント削除機能は現在サポートにお問い合わせいただく必要があります。");
+        alert("アカウント削除は現在準備中です");
     };
 
     const role = initialData.role;
@@ -78,7 +78,7 @@ export const ProfileEdit = ({ initialData, masters }: ProfileEditProps) => {
         <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)} className="pb-20">
                 <div className="flex flex-col items-center py-8">
-                    <div className="relative group cursor-pointer" onClick={() => alert("画像アップロード機能は準備中です")}>
+                    <div className="relative group cursor-pointer" onClick={() => alert("アイコンアップロードは現在準備中です")}>
                         <Avatar className="w-24 h-24 text-4xl" />
                         <div className="absolute inset-0 bg-black bg-opacity-20 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <span className="text-white text-xs">変更</span>

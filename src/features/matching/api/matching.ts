@@ -36,6 +36,7 @@ export async function getMatchingProfiles(userId: string, limit = 10) {
     // 相談したいことの非表示設定
     if (carerProfile.help_topic_visibility === "private") {
       maskedProfile.help_topics = ["非公開"];
+      maskedProfile.help_topic_other = null;
     }
 
     // チャットのスタンスの非表示設定

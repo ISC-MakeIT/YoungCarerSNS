@@ -18,7 +18,7 @@ export default async function ChatRoom({ roomId }: ChatRoomProps) {
   }
 
   // 自分のプロフィール取得
-  const { data: profile } = await getProfile(user.id);
+  const profile = await getProfile(user.id);
 
   // ルームの存在確認とメンバーチェック
   const { data: memberInfo, error: memberError } = await getRoomMembership(roomId, user.id);

@@ -38,6 +38,7 @@ export async function getProfile(userId: string) {
       // 相談したいことの非表示設定
       if (carerProfile.help_topic_visibility === "private") {
         result.help_topics = ["非公開"];
+        result.help_topic_other = null;
       }
 
       // チャットのスタンスの非表示設定

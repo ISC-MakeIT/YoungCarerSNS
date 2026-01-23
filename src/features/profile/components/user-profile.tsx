@@ -90,6 +90,14 @@ export default function UserProfile({
               </Badge>
             ))
           ) : (
+            null
+          )}
+          {profile.help_topic_other && (
+            <Badge className="px-3 py-1 text-sm border border-indigo-100 bg-indigo-50 text-indigo-700">
+              {profile.help_topic_other}
+            </Badge>
+          )}
+          {(!profile.help_topics || profile.help_topics.length === 0) && !profile.help_topic_other && (
             <p className="text-sm text-gray-400">未設定</p>
           )}
         </div>

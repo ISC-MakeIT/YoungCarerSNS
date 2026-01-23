@@ -10,10 +10,13 @@ export function Badge({
   const variants = {
     default: "bg-gray-100 text-gray-600",
     primary: "bg-blue-100 text-blue-600",
+    none: "",
   };
   
+  const activeVariant = className.includes('bg-') ? variants.none : variants[variant];
+
   return (
-    <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${variants[variant]} ${className}`}>
+    <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${activeVariant} ${className}`}>
       {children}
     </span>
   );

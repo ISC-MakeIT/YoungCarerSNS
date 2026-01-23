@@ -12,7 +12,7 @@ export default async function Home() {
     redirect("/login");
   }
 
-  const { data: profile } = await getProfile(user.id);
+  const profile = await getProfile(user.id);
 
   // 未読メッセージの有無を確認
   const hasUnread = await checkAnyUnreadMessages(user.id);
@@ -25,7 +25,7 @@ export default async function Home() {
           こんにちは、{profile?.display_name || "ゲスト"} さん
         </h2>
         <p className="text-sm text-gray-500 mt-1">
-          {profile?.role === "carer" ? "一般" : "サポーター"}としてログイン中
+          {profile?.role === "supporter" ? "サポーター" : "一般"}としてログイン中
         </p>
       </div>
 

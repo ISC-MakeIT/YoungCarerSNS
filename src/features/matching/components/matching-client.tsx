@@ -7,7 +7,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { startChat } from "../actions/start-chat";
-import type { HelpTopicMaster } from "../../profile/types";
+import type { HelpTopicMaster, ChatStanceMaster } from "../../profile/types";
 
 interface Profile {
   id: string;
@@ -17,22 +17,33 @@ interface Profile {
   city: string | null;
   bio: string | null;
   help_topics: string[] | null;
+  help_topic_other: string | null;
+  chat_stances: string[] | null;
 }
 
 interface MatchingClientProps {
   profiles: Profile[];
   helpTopicMaster: HelpTopicMaster[];
+  chatStanceMaster: ChatStanceMaster[];
 }
 
-export default function MatchingClient({ profiles, helpTopicMaster }: MatchingClientProps) {
+export default function MatchingClient({ profiles, helpTopicMaster, chatStanceMaster }: MatchingClientProps) {
   const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const getHelpTopicLabel = (tagId: string, role: string | null) => {
+    if (tagId === "非公開") return "非公開";
     const topic = helpTopicMaster.find(t => t.id === tagId);
     if (!topic) return tagId;
     return role === "supporter" ? topic.supporterLabel : topic.carerLabel;
+  };
+
+  const getChatStanceLabel = (stanceId: string, role: string | null) => {
+    if (stanceId === "非公開") return "非公開";
+    const stance = chatStanceMaster.find(s => s.id === stanceId);
+    if (!stance) return stanceId;
+    return role === "supporter" ? stance.supporterLabel : stance.carerLabel;
   };
 
   const handleStartChat = (userId: string) => {
@@ -80,7 +91,18 @@ export default function MatchingClient({ profiles, helpTopicMaster }: MatchingCl
                   
                   <div className="mt-2 flex flex-wrap gap-1">
                     {profile.help_topics?.map((tag) => (
-                      <Badge key={tag}>{getHelpTopicLabel(tag, profile.role)}</Badge>
+                      <Badge key={tag} className="bg-blue-50 text-blue-700 border border-blue-100">{getHelpTopicLabel(tag, profile.role)}</Badge>
+                    ))}
+                    {profile.help_topic_other && (
+                        <Badge className="bg-indigo-50 text-indigo-700 border border-indigo-100">{profile.help_topic_other}</Badge>
+                    )}
+                  </div>
+
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {profile.chat_stances?.map((stance) => (
+                      <Badge key={stance} className="bg-green-50 text-green-700 border border-green-100">
+                        {getChatStanceLabel(stance, profile.role)}
+                      </Badge>
                     ))}
                   </div>
 

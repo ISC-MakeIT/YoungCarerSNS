@@ -35,7 +35,7 @@ export async function updateSession(request: NextRequest) {
   const url = request.nextUrl.clone()
 
   // 1. ログインしていない場合、(auth) 配下のページへのアクセスを /login にリダイレクト
-  const protectedPaths = ['/home', '/matching', '/chat', '/profile'] 
+  const protectedPaths = ['/home', '/matching', '/chat', '/board', '/profile'] 
   const isProtectedPath = protectedPaths.some(path => url.pathname.startsWith(path))
 
   if (!user && isProtectedPath) {

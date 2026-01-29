@@ -1,8 +1,8 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { MapPin, MessageCircle, Edit } from "lucide-react";
+import { MapPin, MessageCircle, Edit, ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { startChat } from "../../matching/actions/start-chat";
@@ -13,16 +13,19 @@ interface UserProfileProps {
   isMyProfile: boolean;
   helpTopicMaster: HelpTopicMaster[];
   chatStanceMaster: ChatStanceMaster[];
+  reviews: any[];
 }
 
 export default function UserProfile({ 
   profile, 
   isMyProfile, 
   helpTopicMaster,
-  chatStanceMaster 
+  chatStanceMaster,
+  reviews
 }: UserProfileProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   const getHelpTopicLabel = (tagId: string, role: string | null) => {
     if (tagId === "非公開") return "非公開";
@@ -145,6 +148,56 @@ export default function UserProfile({
             </p>
           </div>
         </>
+      )}
+
+      {/* レビュー項目 (サポーターのみ表示) */}
+      {profile.role === "supporter" && (
+        <div className="bg-white p-6 mt-2 border-t border-gray-50">
+          <h3 className="text-sm font-bold text-gray-500 mb-4 underline decoration-blue-200 decoration-4 underline-offset-4">
+            届いたレビュー（{reviews.length}）
+          </h3>
+          {reviews.length > 0 ? (
+            <div className="space-y-4">
+              {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review: any) => (
+                <div key={review.id} className="border-b border-gray-100 last:border-0 pb-3 last:pb-0">
+                  <div className="flex justify-between items-start gap-4">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed flex-1">
+                      {review.comment}
+                    </p>
+                    <span className="text-[10px] text-gray-400 shrink-0 mt-1">
+                      {new Date(review.created_at).toLocaleDateString("ja-JP", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              
+              {reviews.length > 3 && (
+                <button
+                  onClick={() => setShowAllReviews(!showAllReviews)}
+                  className="w-full py-2 flex items-center justify-center text-sm text-blue-600 font-medium hover:bg-gray-50 rounded-lg transition-colors mt-2"
+                >
+                  {showAllReviews ? (
+                    <>
+                      <ChevronUp size={16} className="mr-1" />
+                      閉じる
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown size={16} className="mr-1" />
+                      すべてのレビューを表示（残り{reviews.length - 3}件）
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400">まだレビューはありません</p>
+          )}
+        </div>
       )}
 
       {/* アクションボタン */}

@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/features/profile/api/profile";
 import { getHelpTopicMaster, getChatStanceMaster } from "@/features/profile/api/master";
+import { getReviews } from "@/features/review/api/review";
 import UserProfile from "@/features/profile/components/user-profile";
 import { SetTitle } from "@/components/layout/set-title";
 
@@ -21,10 +22,11 @@ export default async function ProfilePage({ params }: Props) {
   // 自分のIDのページなら /profile へリダイレクトするなどの処理も考えられるが、
   // ここではそのまま表示するロジックにする（isMyProfileで判定）
   
-  const [profile, helpTopicMaster, chatStanceMaster] = await Promise.all([
+  const [profile, helpTopicMaster, chatStanceMaster, reviews] = await Promise.all([
     getProfile(id),
     getHelpTopicMaster(),
     getChatStanceMaster(),
+    getReviews(id),
   ]);
 
   if (!profile) {
@@ -41,6 +43,7 @@ export default async function ProfilePage({ params }: Props) {
         isMyProfile={isMyProfile} 
         helpTopicMaster={helpTopicMaster}
         chatStanceMaster={chatStanceMaster}
+        reviews={reviews}
       />
     </>
   );

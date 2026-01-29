@@ -22,11 +22,12 @@ export default async function ProfilePage({ params }: Props) {
   // 自分のIDのページなら /profile へリダイレクトするなどの処理も考えられるが、
   // ここではそのまま表示するロジックにする（isMyProfileで判定）
   
-  const [profile, helpTopicMaster, chatStanceMaster, reviews] = await Promise.all([
+  const [profile, helpTopicMaster, chatStanceMaster, reviews, { data: currentUserProfile }] = await Promise.all([
     getProfile(id),
     getHelpTopicMaster(),
     getChatStanceMaster(),
     getReviews(id),
+    supabase.from("profiles").select("role").eq("id", user.id).single(),
   ]);
 
   if (!profile) {
@@ -44,6 +45,7 @@ export default async function ProfilePage({ params }: Props) {
         helpTopicMaster={helpTopicMaster}
         chatStanceMaster={chatStanceMaster}
         reviews={reviews}
+        currentUserRole={currentUserProfile?.role}
       />
     </>
   );

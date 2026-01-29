@@ -45,9 +45,6 @@ const LocationStep = ({ role }: LocationStepProps) => {
                             <option value="prefectureOnly">都道府県のみ公開する</option>
                             <option value="private">公開しない</option>
                         </select>
-                        <p className="mt-2 text-xs text-gray-500">
-                            ※サポーターがあなたを見つけやすくなります。
-                        </p>
                     </FormField>
                 </div>
             )}

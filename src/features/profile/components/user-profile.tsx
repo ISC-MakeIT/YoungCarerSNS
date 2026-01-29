@@ -14,6 +14,7 @@ interface UserProfileProps {
   helpTopicMaster: HelpTopicMaster[];
   chatStanceMaster: ChatStanceMaster[];
   reviews: any[];
+  currentUserRole?: string | null;
 }
 
 export default function UserProfile({ 
@@ -21,7 +22,8 @@ export default function UserProfile({
   isMyProfile, 
   helpTopicMaster,
   chatStanceMaster,
-  reviews
+  reviews,
+  currentUserRole
 }: UserProfileProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -126,7 +128,7 @@ export default function UserProfile({
       {/* ケアラー固有情報 (家族状況のみ) */}
       {profile.role === "carer" && (
         <div className="bg-white p-6 mt-2">
-          <h3 className="text-sm font-bold text-gray-500 mb-3 underline decoration-blue-200 decoration-4 underline-offset-4">家族状況</h3>
+          <h3 className="text-sm font-bold text-gray-500 mb-3 underline decoration-blue-200 decoration-4 underline-offset-4">家庭状況</h3>
           <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{profile.family_situation || "未設定"}</p>
         </div>
       )}
@@ -211,14 +213,16 @@ export default function UserProfile({
             プロフィールを編集
           </button>
         ) : (
-          <button
-            onClick={handleStartChat}
-            disabled={isPending}
-            className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
-          >
-            <MessageCircle size={20} className="mr-2" />
-            {isPending ? "準備中..." : "メッセージを送る"}
-          </button>
+          !(currentUserRole === "supporter" && profile.role === "carer") && (
+            <button
+              onClick={handleStartChat}
+              disabled={isPending}
+              className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            >
+              <MessageCircle size={20} className="mr-2" />
+              {isPending ? "準備中..." : "メッセージを送る"}
+            </button>
+          )
         )}
       </div>
     </div>

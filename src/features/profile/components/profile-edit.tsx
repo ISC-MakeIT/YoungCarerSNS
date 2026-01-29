@@ -14,7 +14,6 @@ import {
 } from "../steps";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "../actions/update-profile";
-import { logout } from "../actions/logout";
 import { useState } from "react";
 
 interface ProfileEditProps {
@@ -59,12 +58,6 @@ export const ProfileEdit = ({ initialData, masters }: ProfileEditProps) => {
             router.refresh();
         } else {
             alert("更新に失敗しました");
-        }
-    };
-
-    const handleLogout = async () => {
-        if (confirm("ログアウトしますか？")) {
-            await logout();
         }
     };
 
@@ -113,13 +106,6 @@ export const ProfileEdit = ({ initialData, masters }: ProfileEditProps) => {
                         </button>
 
                         <div className="pt-10 space-y-2 border-t">
-                             <button 
-                                type="button"
-                                onClick={handleLogout}
-                                className="w-full py-3 text-red-600 font-medium hover:bg-red-50 rounded-lg transition-colors"
-                             >
-                                 ログアウト
-                             </button>
                              <button 
                                 type="button"
                                 onClick={handleDeleteAccount}

@@ -6,6 +6,7 @@ import { MapPin, MessageCircle, Edit, ChevronDown, ChevronUp } from "lucide-reac
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { startChat } from "../../matching/actions/start-chat";
+import { logout } from "../actions/logout";
 import type { HelpTopicMaster, ChatStanceMaster } from "../types";
 
 interface UserProfileProps {
@@ -55,6 +56,12 @@ export default function UserProfile({
         alert("チャットの開始に失敗しました");
       }
     });
+  };
+
+  const handleLogout = async () => {
+    if (confirm("ログアウトしますか？")) {
+      await logout();
+    }
   };
 
   return (
@@ -199,6 +206,18 @@ export default function UserProfile({
           ) : (
             <p className="text-sm text-gray-400">まだレビューはありません</p>
           )}
+        </div>
+      )}
+
+      {/* ログアウトボタン (コンテンツの最後) */}
+      {isMyProfile && (
+        <div className="px-6 py-8">
+          <button
+            onClick={handleLogout}
+            className="w-full py-3 text-red-600 font-medium hover:bg-red-50 rounded-lg transition-colors"
+          >
+            ログアウト
+          </button>
         </div>
       )}
 

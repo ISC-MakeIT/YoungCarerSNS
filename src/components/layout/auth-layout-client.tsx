@@ -7,7 +7,13 @@ import { Home, Users, MessageCircle, MessageSquare } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { useTitle } from "./title-context";
 
-export default function AuthLayoutClient({ children }: { children: React.ReactNode }) {
+export default function AuthLayoutClient({
+  children,
+  userId,
+}: {
+  children: React.ReactNode;
+  userId?: string;
+}) {
   const pathname = usePathname();
   const { title, setTitle } = useTitle();
 
@@ -32,7 +38,7 @@ export default function AuthLayoutClient({ children }: { children: React.ReactNo
     <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
       <header className="flex-none bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <h1 className="text-lg font-bold text-gray-800">{title}</h1>
-        <Link href="/profile/edit">
+        <Link href={userId ? `/profile/${userId}` : "/profile/edit"}>
           <Avatar className="w-8 h-8 pointer-events-none" />
         </Link>
       </header>

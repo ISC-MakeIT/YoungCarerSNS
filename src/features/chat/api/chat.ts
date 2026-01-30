@@ -127,12 +127,23 @@ export async function getUnreadCount(roomId: string, userId: string, lastReadAt:
 }
 
 export async function checkAnyUnreadMessages(userId: string) {
-  const { data: memberRooms } = await getMyChatRooms(userId);
+  const supabase = await createClient();
+  const { data: memberRooms } = await supabase
+    .from("room_members")
+    .select("room_id, last_read_at")
+    .eq("user_id", userId);
+
   if (!memberRooms || memberRooms.length === 0) return false;
 
-  for (const room of memberRooms) {
-    const { count } = await getUnreadCount(room.room_id, userId, room.last_read_at);
-    if (count && count > 0) return true;
-  }
-  return false;
+  // 各ルームの未読条件をORで結合して1つのクエリで確認する
+  const filters = memberRooms.map((room) => 
+    `and(room_id.eq.${room.room_id},sender_id.neq.${userId},created_at.gt.${room.last_read_at || "1970-01-01"})`
+  ).join(",");
+
+  const { count } = await supabase
+    .from("messages")
+    .select("*", { count: "exact", head: true })
+    .or(filters);
+
+  return !!(count && count > 0);
 }

@@ -1,21 +1,21 @@
 import { Bell } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { checkAnyUnreadMessages } from "@/features/chat/api/chat";
 import { getProfile } from "@/features/profile/api/profile";
 
 export default async function Home() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await getUser();
 
   if (!user) {
     redirect("/login");
   }
 
-  const profile = await getProfile(user.id);
-
-  // 未読メッセージの有無を確認
-  const hasUnread = await checkAnyUnreadMessages(user.id);
+  // 並列でデータを取得する
+  const [profile, hasUnread] = await Promise.all([
+    getProfile(user.id),
+    checkAnyUnreadMessages(user.id)
+  ]);
 
   return (
     <div className="p-4 space-y-6">

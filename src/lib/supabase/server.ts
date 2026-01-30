@@ -1,7 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
-export async function createClient() {
+export const createClient = cache(async () => {
     const cookieStore = await cookies();
 
     return createServerClient(
@@ -13,11 +14,22 @@ export async function createClient() {
                     return cookieStore.getAll();
                 },
                 setAll(cookiesToSet) {
-                    cookiesToSet.forEach(({ name, value, options }) => {
-                        cookieStore.set(name, value, options);
-                    });
+                    try {
+                        cookiesToSet.forEach(({ name, value, options }) => {
+                            cookieStore.set(name, value, options);
+                        });
+                    } catch (error) {
+                        // The `setAll` method was called from a Server Component.
+                        // This can be ignored if you have middleware refreshing
+                        // user sessions.
+                    }
                 }
             }
         }
     );
-}
+});
+
+export const getUser = cache(async () => {
+    const supabase = await createClient();
+    return await supabase.auth.getUser();
+});

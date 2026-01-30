@@ -2,7 +2,7 @@
 
 import { useFormContext } from "react-hook-form";
 import { StepContainer } from "../../../components/ui/step-container";
-import { SelectionCard } from "../../../components/ui/selection-card";
+import { ChoiceTag } from "../../../components/ui/choice-tag";
 import { VisibilityToggle } from "../../../components/ui/visibility-toggle";
 
 interface ChatStanceStepProps {
@@ -17,16 +17,15 @@ const ChatStanceStep = ({ role, masters }: ChatStanceStepProps) => {
     const chatStances = masters.chatStanceMaster;
 
     return (
-        <StepContainer description="チャットでのコミュニケーションについて教えてください。">
-            <div className="grid grid-cols-1 gap-3">
+        <StepContainer description="チャットでのコミュニケーションについて教えてください。（複数選択可）">
+            <div className="flex flex-wrap gap-2">
                 {chatStances.map((stance) => (
-                    <SelectionCard 
+                    <ChoiceTag 
                         key={stance.id}
-                        type="checkbox"
                         name="chatStance"
                         value={stance.id}
-                        register={register}
-                        title={role === "carer" ? stance.carerLabel : stance.supporterLabel}
+                        label={role === "carer" ? stance.carerLabel : stance.supporterLabel}
+                        color="green"
                     />
                 ))}
             </div>

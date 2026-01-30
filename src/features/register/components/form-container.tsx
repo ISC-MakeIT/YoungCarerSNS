@@ -98,7 +98,7 @@ export function FormContainer({ masters }: FormContainerProps) {
 
     return (
         <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col min-h-screen bg-gray-50">
+            <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col h-screen bg-gray-50 overflow-hidden">
                 <FormHeader 
                     title={title} 
                     onBack={handleBack} 

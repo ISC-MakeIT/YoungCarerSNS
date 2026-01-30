@@ -22,7 +22,7 @@ const PasswordStep = () => {
                         minLength: { value: 8, message: "パスワードは8文字以上である必要があります" }
                     })} 
                     placeholder="英数字8文字以上" 
-                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
                 />
             </FormField>
 
@@ -38,7 +38,7 @@ const PasswordStep = () => {
                         validate: (value) => value === password || "パスワードが一致しません"
                     })} 
                     placeholder="もう一度入力してください" 
-                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
                 />
             </FormField>
         </StepContainer>

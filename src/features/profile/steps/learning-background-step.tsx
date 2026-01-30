@@ -14,7 +14,7 @@ const LearningBackgroundStep = () => {
                     {...register("learningBackground")} 
                     placeholder="例：社会福祉士の資格を保有しています。大学でヤングケアラー支援について研究していました。" 
                     rows={4}
-                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 resize-none"
                 />
             </FormField>
         </StepContainer>

@@ -17,7 +17,7 @@ const LocationStep = ({ role }: LocationStepProps) => {
             <FormField label="都道府県" name="prefecture" error={errors.prefecture}>
                 <select 
                     {...register("prefecture", { required: isRequired ? "都道府県を選択してください" : false })} 
-                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
                 >
                     <option value="">選択してください</option>
                     <option value="神奈川県">神奈川県</option>
@@ -30,7 +30,7 @@ const LocationStep = ({ role }: LocationStepProps) => {
                     type="text" 
                     {...register("city", { required: isRequired ? "市区町村を入力してください" : false })} 
                     placeholder="例：横浜市中区" 
-                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
                 />
             </FormField>
 

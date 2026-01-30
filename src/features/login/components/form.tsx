@@ -7,6 +7,7 @@ import { FormFooter } from "@/features/register/components/form-footer";
 import { FormField } from "@/components/ui/form-field";
 import { submitForm } from "../actions/submit-form";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function LoginForm() {
     const methods = useForm({
@@ -37,37 +38,45 @@ export function LoginForm() {
 
     return (
         <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col min-h-screen bg-gray-50">
+            <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col h-screen bg-gray-50 overflow-hidden">
                 <FormHeader title="ログイン" onBack={() => router.push("/")}/>
 
                 <main className="flex-1 overflow-y-auto">
-                    <div className="p-4">
-                        <div className="max-w-md mx-auto space-y-6">
-                            <FormField label="メールアドレス" name="email" error={methods.formState.errors.email}>
-                                <input
-                                    type="email"
-                                    {...methods.register("email", { 
-                                        required: "メールアドレスは必須です",
-                                        pattern: {
-                                            value: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-                                            message: "有効なメールアドレスを入力してください"
-                                        }
-                                    })}
-                                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                    placeholder="example@mail.com"
-                                />
-                            </FormField>
+                    <div className="p-6">
+                        <div className="max-w-md mx-auto space-y-8">
+                            <div className="space-y-6">
+                                <FormField label="メールアドレス" name="email" error={methods.formState.errors.email}>
+                                    <input
+                                        type="email"
+                                        {...methods.register("email", { 
+                                            required: "メールアドレスは必須です",
+                                            pattern: {
+                                                value: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+                                                message: "有効なメールアドレスを入力してください"
+                                            }
+                                        })}
+                                        className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
+                                        placeholder="example@mail.com"
+                                    />
+                                </FormField>
 
-                            <FormField label="パスワード" name="password" error={methods.formState.errors.password}>
-                                <input
-                                    type="password"
-                                    {...methods.register("password", { required: "パスワードは必須です" })}
-                                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                                />
-                            </FormField>
+                                <FormField label="パスワード" name="password" error={methods.formState.errors.password}>
+                                    <input
+                                        type="password"
+                                        {...methods.register("password", { required: "パスワードは必須です" })}
+                                        className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all"
+                                        placeholder="••••••••"
+                                    />
+                                </FormField>
+                            </div>
 
-                            <div className="text-right">
-                                <a href="/register" className="text-sm text-blue-600">アカウント作成はこちら</a>
+                            <div className="text-center">
+                                <Link 
+                                    href="/register" 
+                                    className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                                >
+                                    アカウント作成はこちら
+                                </Link>
                             </div>
                         </div>
                     </div>

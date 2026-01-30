@@ -82,16 +82,31 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Sub feature links */}
-            <div className="pb-24 flex justify-center px-6">
+            {/* Sub feature links / Quick Action */}
+            <section className="pb-24 flex justify-center px-6">
                 <Link 
                     href="/reflection" 
-                    className="flex items-center space-x-2 text-slate-500 hover:text-blue-600 font-bold transition-colors group border-b border-transparent hover:border-blue-600 py-1"
+                    className="group max-w-2xl w-full flex flex-col md:flex-row items-center justify-between p-8 bg-slate-50 rounded-3xl border border-slate-100 transition-all hover:bg-blue-50/50 hover:border-blue-100"
                 >
-                    <span>まずは今の気持ちを記録してみる（振り返り機能）</span>
-                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                    <div className="flex-1 text-center md:text-left space-y-2 mb-6 md:mb-0">
+                        <div className="flex items-center justify-center md:justify-start space-x-2 text-blue-600 mb-1">
+                            <Sparkles size={18} />
+                            <span className="text-xs font-bold tracking-wider uppercase">振り返り機能</span>
+                        </div>
+                        <h2 className="text-xl font-bold text-slate-800">
+                            自分の状態と向き合う。
+                        </h2>
+                        <p className="text-slate-500 text-sm leading-relaxed">
+                            登録不要。静かな場所で自分と向き合う時間を作ります。
+                        </p>
+                    </div>
+
+                    <div className="flex items-center space-x-2 text-slate-400 group-hover:text-blue-600 font-bold transition-colors">
+                        <span className="text-sm">はじめる</span>
+                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    </div>
                 </Link>
-            </div>
+            </section>
 
             {/* Supporter recruit */}
             <section className="px-6 py-24 bg-white border-t border-slate-100">

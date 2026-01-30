@@ -2,9 +2,14 @@
 
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import Link from "next/link"
 import { SelectionCard } from "@/components/ui/selection-card"
 import { StepContainer } from "@/components/ui/step-container"
-import { Moon, Star, Cloud, Sun, Sparkles, ArrowRight, ArrowLeft, RefreshCw } from "lucide-react"
+import { Moon, Star, Cloud, Sun, Sparkles, ArrowRight, ArrowLeft, RefreshCw, HandHeart, MessageCircle } from "lucide-react"
+import type { HelpTopicMaster } from "@/features/profile/types"
+import { getPseudoMatchingProfiles } from "@/features/matching/actions/get-pseudo-matching-profiles"
+import { Avatar } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 
 type FormValues = {
   practical: string
@@ -15,9 +20,10 @@ type FormValues = {
   weekly_hours: string
   time_impact: string
   wants_support: string
+  selected_topics: string[]
 }
 
-const QUESTIONS = [
+const BASE_QUESTIONS = [
   {
     id: "practical",
     title: "1. 家の中での実用的なサポート",
@@ -114,11 +120,18 @@ const QUESTIONS = [
   },
 ]
 
-export const ReflectionForm = () => {
+interface ReflectionFormProps {
+  helpTopics?: HelpTopicMaster[];
+  userId?: string;
+}
+
+export const ReflectionForm = ({ helpTopics = [], userId }: ReflectionFormProps) => {
   const [step, setStep] = useState(0)
   const [result, setResult] = useState<number | null>(null)
+  const [matchingProfiles, setMatchingProfiles] = useState<any[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { register, handleSubmit, watch, reset } = useForm<FormValues>({
+  const { register, handleSubmit, watch, reset, setValue } = useForm<FormValues>({
     defaultValues: {
       practical: "",
       care: "",
@@ -128,20 +141,44 @@ export const ReflectionForm = () => {
       weekly_hours: "",
       time_impact: "",
       wants_support: "",
+      selected_topics: [],
     }
   })
 
+  const QUESTIONS = BASE_QUESTIONS
   const currentQuestion = QUESTIONS[step]
   const isLastStep = step === QUESTIONS.length - 1
   const watchedValue = watch(currentQuestion?.id as keyof FormValues)
+  const watchedWantsSupport = watch("wants_support")
+  const selectedTopics = watch("selected_topics")
 
-  const onSubmit = (data: FormValues) => {
-    const totalScore = Object.values(data).reduce((acc, val) => acc + (Number(val) || 0), 0)
-    setResult(totalScore)
+  const toggleTopic = (id: string) => {
+    const current = selectedTopics || [];
+    const next = current.includes(id)
+      ? current.filter(t => t !== id)
+      : [...current, id];
+    setValue("selected_topics", next);
+  };
+
+  const onSubmit = async (data: FormValues) => {
+    setIsSubmitting(true);
+    try {
+      const { selected_topics, ...scores } = data
+      const totalScore = Object.values(scores).reduce((acc, val) => acc + (Number(val) || 0), 0)
+      
+      setResult(totalScore)
+
+      if (data.wants_support === "15" && selected_topics.length > 0) {
+        const profiles = await getPseudoMatchingProfiles(selected_topics);
+        setMatchingProfiles(profiles);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const nextStep = () => {
-    if (watchedValue) {
+    if (watchedValue && watchedValue.length !== 0) {
       setStep(prev => prev + 1)
     }
   }
@@ -154,7 +191,14 @@ export const ReflectionForm = () => {
     reset()
     setStep(0)
     setResult(null)
+    setMatchingProfiles([])
   }
+
+  const getHelpTopicLabel = (tagId: string) => {
+    const topic = helpTopics.find(t => t.id === tagId);
+    return topic ? topic.supporterLabel : tagId; // Result shows supporter's label if possible, or carer's? Usually carer sees what they can get.
+    // In matching client it uses role-based. Here we show supporter's topics.
+  };
 
   if (result !== null) {
     let MarkIcon = Sparkles
@@ -164,7 +208,7 @@ export const ReflectionForm = () => {
 
     if (result >= 90) {
       MarkIcon = Moon
-      markText = "🌕 月マーク"
+      markText = "🌙 月マーク"
       colorClass = "text-yellow-600"
       feedback = "あなたは非常に多くのケアを担っている可能性があります。一人で抱え込まず、周りの大人や専門機関に相談してみるのも一つの手です。"
     } else if (result >= 70) {
@@ -193,12 +237,69 @@ export const ReflectionForm = () => {
               <MarkIcon size={80} strokeWidth={1.5} />
             </div>
             <div className={`text-3xl font-black ${colorClass}`}>{markText}</div>
-            <div className="text-5xl font-bold text-gray-900">{result} <span className="text-xl">点</span></div>
           </div>
           
           <p className="text-lg text-gray-700 leading-relaxed bg-blue-50 p-6 rounded-xl border border-blue-100">
             {feedback}
           </p>
+
+          {matchingProfiles.length > 0 && (
+            <div className="space-y-4 pt-4 text-left">
+              <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <HandHeart className="text-pink-500" />
+                あなたをサポートできるかもしれない人
+              </h3>
+              <div className="grid gap-3">
+                {matchingProfiles.map((profile) => (
+                  <div key={profile.id} className="p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex flex-col gap-3">
+                    <div className="flex items-center gap-4">
+                      <Link 
+                        href={userId ? `/profile/${profile.id}` : `/register`}
+                        className="flex items-center gap-4 flex-1 hover:opacity-75 transition-opacity"
+                      >
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {profile.icon_url ? (
+                            <img src={profile.icon_url} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <Avatar className="w-full h-full" />
+                          )}
+                        </div>
+                        <div className="flex-1 text-left">
+                          <div className="font-bold text-gray-900">{profile.display_name}</div>
+                          <div className="text-xs text-gray-500 line-clamp-1">{profile.bio}</div>
+                        </div>
+                      </Link>
+                      <Link 
+                        href={userId ? `/profile/${profile.id}` : `/register`}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                      >
+                        <MessageCircle size={20} />
+                      </Link>
+                    </div>
+                    {(profile.help_topics?.length > 0 || profile.help_topic_other) && (
+                      <div className="flex flex-wrap gap-1">
+                        {profile.help_topics?.map((tag: string) => (
+                          <Badge key={tag} className="bg-blue-50 text-blue-700 border border-blue-100 text-[10px] py-0 px-2">
+                            {getHelpTopicLabel(tag)}
+                          </Badge>
+                        ))}
+                        {profile.help_topic_other && (
+                          <Badge className="bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] py-0 px-2">
+                            {profile.help_topic_other}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {!userId && (
+                <p className="text-sm text-gray-500 text-center">
+                  会員登録（無料）をすると、このようなサポーターの方々に相談することができます。
+                </p>
+              )}
+            </div>
+          )}
 
           <button
             onClick={handleReset}
@@ -252,6 +353,34 @@ export const ReflectionForm = () => {
                   />
                 ))}
               </div>
+
+              {currentQuestion.id === "wants_support" && watchedWantsSupport === "15" && (
+                <div className="mt-8 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div className="flex items-center gap-2 text-blue-600 font-bold">
+                    <HandHeart size={20} />
+                    <span>近いものがあれば選択してください（複数選択可）</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {helpTopics.map((topic) => {
+                      const isSelected = selectedTopics?.includes(topic.id);
+                      return (
+                        <button
+                          key={topic.id}
+                          type="button"
+                          onClick={() => toggleTopic(topic.id)}
+                          className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
+                            isSelected
+                              ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100"
+                              : "bg-white border-gray-200 text-gray-600 hover:border-blue-300"
+                          }`}
+                        >
+                          {topic.carerLabel}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </StepContainer>
 
@@ -260,7 +389,8 @@ export const ReflectionForm = () => {
               <button
                 type="button"
                 onClick={prevStep}
-                className="flex-1 flex items-center justify-center gap-2 py-4 border-2 border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50"
+                disabled={isSubmitting}
+                className="flex-1 flex items-center justify-center gap-2 py-4 border-2 border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 disabled:opacity-50"
               >
                 <ArrowLeft size={20} />
                 戻る
@@ -269,10 +399,10 @@ export const ReflectionForm = () => {
             {isLastStep ? (
               <button
                 type="submit"
-                disabled={!watchedValue}
+                disabled={isSubmitting || !watchedValue}
                 className="flex-[2] py-4 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-xl font-bold flex items-center justify-center gap-2"
               >
-                診断結果を見る
+                {isSubmitting ? "診断中..." : "診断結果を見る"}
                 <ArrowRight size={20} />
               </button>
             ) : (

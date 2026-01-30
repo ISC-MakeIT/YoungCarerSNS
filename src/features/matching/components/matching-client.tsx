@@ -3,11 +3,13 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Search } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { startChat } from "../actions/start-chat";
+import { getFilteredProfiles } from "../actions/get-filtered-profiles";
 import type { HelpTopicMaster, ChatStanceMaster } from "../../profile/types";
+import MatchingSearchSheet from "./matching-search-sheet";
 
 interface Profile {
   id: string;
@@ -22,15 +24,78 @@ interface Profile {
 }
 
 interface MatchingClientProps {
-  profiles: Profile[];
+  initialProfiles: Profile[];
   helpTopicMaster: HelpTopicMaster[];
   chatStanceMaster: ChatStanceMaster[];
+  currentUserRole: "carer" | "supporter" | null;
+  initialFilters?: {
+    topics: string[];
+    stances: string[];
+    q: string;
+    role: "carer" | "supporter" | "all";
+  };
 }
 
-export default function MatchingClient({ profiles, helpTopicMaster, chatStanceMaster }: MatchingClientProps) {
+export default function MatchingClient({ 
+  initialProfiles, 
+  helpTopicMaster, 
+  chatStanceMaster,
+  currentUserRole,
+  initialFilters
+}: MatchingClientProps) {
   const router = useRouter();
+  const [profiles, setProfiles] = useState<Profile[]>(initialProfiles);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isFiltered, setIsFiltered] = useState(false);
+  
+  // 検索シートの表示用。初期状態やリセット時は「何も選択されていない」状態にする
+  const [currentFilters, setCurrentFilters] = useState({
+    topics: [] as string[],
+    stances: [] as string[],
+    q: "",
+    role: "all" as "carer" | "supporter" | "all"
+  });
+
+  const handleApplySearch = (filters: { 
+    topics: string[]; 
+    stances: string[]; 
+    q: string;
+    role: "carer" | "supporter" | "all";
+  }) => {
+    startTransition(async () => {
+      try {
+        const results = await getFilteredProfiles(filters);
+        setProfiles(results);
+        setCurrentFilters(filters);
+        setIsFiltered(true);
+      } catch (error) {
+        console.error(error);
+        alert("検索に失敗しました");
+      }
+    });
+  };
+
+  const resetSearch = () => {
+    startTransition(async () => {
+        try {
+          // 初期表示（自分へのレコメンド）の条件で再取得
+          const results = await getFilteredProfiles({
+            topics: initialFilters?.topics || [],
+            stances: initialFilters?.stances || [],
+            q: initialFilters?.q || "",
+            role: initialFilters?.role || "all"
+          });
+          setProfiles(results);
+          // UI上のフィルターはクリア
+          setCurrentFilters({ topics: [], stances: [], q: "", role: "all" });
+          setIsFiltered(false);
+        } catch (error) {
+          console.error(error);
+        }
+      });
+  };
 
   const getHelpTopicLabel = (tagId: string, role: string | null) => {
     if (tagId === "非公開") return "非公開";
@@ -61,7 +126,22 @@ export default function MatchingClient({ profiles, helpTopicMaster, chatStanceMa
   };
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="p-4 space-y-4 pb-32">
+      {/* 検索ステータス - ユーザーが明示的に検索を行った場合のみ表示 */}
+      {isFiltered && (
+        <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 flex items-center justify-between">
+          <p className="text-xs text-blue-700 font-medium">
+            検索条件を適用中
+          </p>
+          <button 
+            onClick={resetSearch}
+            className="text-xs text-blue-600 underline"
+          >
+            リセット
+          </button>
+        </div>
+      )}
+
       <div className="space-y-3">
         {profiles.length > 0 ? (
           profiles.map((profile) => (
@@ -111,13 +191,15 @@ export default function MatchingClient({ profiles, helpTopicMaster, chatStanceMa
                       <p className="text-sm text-gray-700 leading-relaxed">
                         {profile.bio || "自己紹介はまだありません。"}
                       </p>
-                      <button
-                        onClick={() => handleStartChat(profile.id)}
-                        disabled={isPending}
-                        className="mt-4 w-full py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
-                      >
-                        {isPending ? "準備中..." : "メッセージを送る"}
-                      </button>
+                      {!(currentUserRole === "supporter" && profile.role === "carer") && (
+                        <button
+                          onClick={() => handleStartChat(profile.id)}
+                          disabled={isPending}
+                          className="mt-4 w-full py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+                        >
+                          {isPending ? "準備中..." : "メッセージを送る"}
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -130,6 +212,27 @@ export default function MatchingClient({ profiles, helpTopicMaster, chatStanceMa
           </div>
         )}
       </div>
+
+      {/* 検索アクションボタン */}
+      <div className="fixed bottom-20 left-0 right-0 p-4 max-w-2xl mx-auto pointer-events-none">
+        <button
+          onClick={() => setIsSearchOpen(true)}
+          className="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl flex items-center justify-center shadow-xl hover:bg-blue-700 active:scale-95 transition-all pointer-events-auto"
+        >
+          <Search size={22} className="mr-2" />
+          条件を指定して探す
+        </button>
+      </div>
+
+      <MatchingSearchSheet
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onSearch={handleApplySearch}
+        helpTopicMaster={helpTopicMaster}
+        chatStanceMaster={chatStanceMaster}
+        initialFilters={currentFilters}
+        currentUserRole={currentUserRole}
+      />
     </div>
   );
 }

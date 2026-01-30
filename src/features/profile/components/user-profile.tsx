@@ -1,11 +1,12 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { MapPin, MessageCircle, Edit } from "lucide-react";
+import { MapPin, MessageCircle, Edit, ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { startChat } from "../../matching/actions/start-chat";
+import { logout } from "../actions/logout";
 import type { HelpTopicMaster, ChatStanceMaster } from "../types";
 
 interface UserProfileProps {
@@ -13,16 +14,21 @@ interface UserProfileProps {
   isMyProfile: boolean;
   helpTopicMaster: HelpTopicMaster[];
   chatStanceMaster: ChatStanceMaster[];
+  reviews: any[];
+  currentUserRole?: string | null;
 }
 
 export default function UserProfile({ 
   profile, 
   isMyProfile, 
   helpTopicMaster,
-  chatStanceMaster 
+  chatStanceMaster,
+  reviews,
+  currentUserRole
 }: UserProfileProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   const getHelpTopicLabel = (tagId: string, role: string | null) => {
     if (tagId === "非公開") return "非公開";
@@ -50,6 +56,12 @@ export default function UserProfile({
         alert("チャットの開始に失敗しました");
       }
     });
+  };
+
+  const handleLogout = async () => {
+    if (confirm("ログアウトしますか？")) {
+      await logout();
+    }
   };
 
   return (
@@ -123,7 +135,7 @@ export default function UserProfile({
       {/* ケアラー固有情報 (家族状況のみ) */}
       {profile.role === "carer" && (
         <div className="bg-white p-6 mt-2">
-          <h3 className="text-sm font-bold text-gray-500 mb-3 underline decoration-blue-200 decoration-4 underline-offset-4">家族状況</h3>
+          <h3 className="text-sm font-bold text-gray-500 mb-3 underline decoration-blue-200 decoration-4 underline-offset-4">家庭状況</h3>
           <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{profile.family_situation || "未設定"}</p>
         </div>
       )}
@@ -147,6 +159,68 @@ export default function UserProfile({
         </>
       )}
 
+      {/* レビュー項目 (サポーターのみ表示) */}
+      {profile.role === "supporter" && (
+        <div className="bg-white p-6 mt-2 border-t border-gray-50">
+          <h3 className="text-sm font-bold text-gray-500 mb-4 underline decoration-blue-200 decoration-4 underline-offset-4">
+            届いたレビュー（{reviews.length}）
+          </h3>
+          {reviews.length > 0 ? (
+            <div className="space-y-4">
+              {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review: any) => (
+                <div key={review.id} className="border-b border-gray-100 last:border-0 pb-3 last:pb-0">
+                  <div className="flex justify-between items-start gap-4">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed flex-1">
+                      {review.comment}
+                    </p>
+                    <span className="text-[10px] text-gray-400 shrink-0 mt-1">
+                      {new Date(review.created_at).toLocaleDateString("ja-JP", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              
+              {reviews.length > 3 && (
+                <button
+                  onClick={() => setShowAllReviews(!showAllReviews)}
+                  className="w-full py-2 flex items-center justify-center text-sm text-blue-600 font-medium hover:bg-gray-50 rounded-lg transition-colors mt-2"
+                >
+                  {showAllReviews ? (
+                    <>
+                      <ChevronUp size={16} className="mr-1" />
+                      閉じる
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown size={16} className="mr-1" />
+                      すべてのレビューを表示（残り{reviews.length - 3}件）
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400">まだレビューはありません</p>
+          )}
+        </div>
+      )}
+
+      {/* ログアウトボタン (コンテンツの最後) */}
+      {isMyProfile && (
+        <div className="px-6 py-8">
+          <button
+            onClick={handleLogout}
+            className="w-full py-3 text-red-600 font-medium hover:bg-red-50 rounded-lg transition-colors"
+          >
+            ログアウト
+          </button>
+        </div>
+      )}
+
       {/* アクションボタン */}
       <div className="fixed bottom-20 left-0 right-0 p-4 max-w-2xl mx-auto">
         {isMyProfile ? (
@@ -158,14 +232,16 @@ export default function UserProfile({
             プロフィールを編集
           </button>
         ) : (
-          <button
-            onClick={handleStartChat}
-            disabled={isPending}
-            className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
-          >
-            <MessageCircle size={20} className="mr-2" />
-            {isPending ? "準備中..." : "メッセージを送る"}
-          </button>
+          !(currentUserRole === "supporter" && profile.role === "carer") && (
+            <button
+              onClick={handleStartChat}
+              disabled={isPending}
+              className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            >
+              <MessageCircle size={20} className="mr-2" />
+              {isPending ? "準備中..." : "メッセージを送る"}
+            </button>
+          )
         )}
       </div>
     </div>

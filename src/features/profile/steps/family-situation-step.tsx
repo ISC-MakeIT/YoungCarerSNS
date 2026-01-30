@@ -9,8 +9,8 @@ const FamilySituationStep = () => {
     const { register } = useFormContext();
 
     return (
-        <StepContainer description="現在の状況について教えてください。">
-            <FormField label="状況" name="familySituation">
+        <StepContainer description="現在の家庭状況について教えてください。">
+            <FormField label="家庭状況" name="familySituation">
                 <textarea 
                     {...register("familySituation")} 
                     placeholder="例：高齢の家族の生活サポートをしている" 

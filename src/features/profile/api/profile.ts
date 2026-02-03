@@ -1,8 +1,8 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 
 export async function getProfile(userId: string) {
   const supabase = await createClient();
-  const { data: { user: currentUser } } = await supabase.auth.getUser();
+  const { data: { user: currentUser } } = await getUser();
   const isOwner = currentUser?.id === userId;
 
   const { data: profile, error } = await supabase

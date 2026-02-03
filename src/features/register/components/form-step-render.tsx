@@ -18,7 +18,7 @@ export function FormStepRender({ CurrentStep, role, setRole, masters }: FormStep
     // 各ステップに必要な props を渡す
     // role や masters などを共通で渡せるようにする
     return (
-        <div className="p-4">
+        <div className="p-6">
             <CurrentStep 
                 role={role} 
                 setRole={setRole} 

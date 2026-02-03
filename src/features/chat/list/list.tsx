@@ -1,13 +1,12 @@
 import { Search } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getMyChatRooms, getOtherMemberProfile, getLastMessage, getUnreadCount } from "../api/chat";
 
 export default async function ChatList() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await getUser();
 
   if (!user) {
     redirect("/login");

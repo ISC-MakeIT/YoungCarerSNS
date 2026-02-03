@@ -14,7 +14,7 @@ const CareExperienceStep = () => {
                     {...register("careExperience")} 
                     placeholder="例：祖父の介護を5年間経験しました。" 
                     rows={4}
-                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 resize-none"
                 />
             </FormField>
         </StepContainer>

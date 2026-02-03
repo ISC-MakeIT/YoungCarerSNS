@@ -3,7 +3,7 @@
 import { useFormContext } from "react-hook-form";
 import { StepContainer } from "../../../components/ui/step-container";
 import { FormField } from "../../../components/ui/form-field";
-import { SelectionCard } from "../../../components/ui/selection-card";
+import { ChoiceTag } from "../../../components/ui/choice-tag";
 import { VisibilityToggle } from "../../../components/ui/visibility-toggle";
 
 interface HelpTopicStepProps {
@@ -18,28 +18,29 @@ const HelpTopicStep = ({ role, masters }: HelpTopicStepProps) => {
     const helpTopics = masters.helpTopicMaster;
 
     return (
-        <StepContainer description={role === "carer" ? "どのようなサポートが必要ですか？" : "どのようなサポートが可能ですか？"}>
-            <div className="grid grid-cols-1 gap-3">
+        <StepContainer description={role === "carer" ? "どのようなサポートが必要ですか？（複数選択可）" : "どのようなサポートが可能ですか？（複数選択可）"}>
+            <div className="flex flex-wrap gap-2">
                 {helpTopics.map((topic) => (
-                    <SelectionCard 
+                    <ChoiceTag 
                         key={topic.id}
-                        type="checkbox"
                         name="helpTopics"
                         value={topic.id}
-                        register={register}
-                        title={role === "carer" ? topic.carerLabel : topic.supporterLabel}
+                        label={role === "carer" ? topic.carerLabel : topic.supporterLabel}
+                        color="blue"
                     />
                 ))}
             </div>
 
-            <FormField label="その他（自由記述）" name="helpTopicOther">
-                <input 
-                    type="text" 
-                    {...register("helpTopicOther")} 
-                    placeholder="例：話し相手がほしい、など" 
-                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-            </FormField>
+            <div className="mt-8">
+                <FormField label="その他（自由記述）" name="helpTopicOther">
+                    <input 
+                        type="text" 
+                        {...register("helpTopicOther")} 
+                        placeholder="例：話し相手がほしい、など" 
+                        className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
+                    />
+                </FormField>
+            </div>
 
             {role === "carer" && (
                 <VisibilityToggle 

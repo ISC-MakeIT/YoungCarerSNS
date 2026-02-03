@@ -3,9 +3,10 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { SelectionCard } from "@/components/ui/selection-card"
 import { StepContainer } from "@/components/ui/step-container"
-import { Moon, Star, Cloud, Sun, Sparkles, ArrowRight, ArrowLeft, RefreshCw, HandHeart, MessageCircle } from "lucide-react"
+import { Moon, Star, Cloud, Sun, Sparkles, ArrowRight, ArrowLeft, RefreshCw, HandHeart, MessageCircle, X } from "lucide-react"
 import type { HelpTopicMaster } from "@/features/profile/types"
 import { getPseudoMatchingProfiles } from "@/features/matching/actions/get-pseudo-matching-profiles"
 import { Avatar } from "@/components/ui/avatar"
@@ -126,6 +127,7 @@ interface ReflectionFormProps {
 }
 
 export const ReflectionForm = ({ helpTopics = [], userId }: ReflectionFormProps) => {
+  const router = useRouter()
   const [step, setStep] = useState(0)
   const [result, setResult] = useState<number | null>(null)
   const [matchingProfiles, setMatchingProfiles] = useState<any[]>([])
@@ -230,7 +232,14 @@ export const ReflectionForm = ({ helpTopics = [], userId }: ReflectionFormProps)
 
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto p-8 text-center space-y-8 bg-white rounded-2xl shadow-xl border border-gray-100">
+        <div className="max-w-2xl mx-auto p-8 text-center space-y-8 bg-white rounded-2xl shadow-xl border border-gray-100 relative">
+          <button 
+            onClick={() => router.back()}
+            className="absolute top-6 left-6 flex items-center gap-1 text-gray-400 hover:text-gray-600 transition-colors group"
+          >
+            <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
+            <span className="text-sm font-medium">戻る</span>
+          </button>
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-gray-800">結果</h2>
             <div className={`p-8 bg-gray-50 rounded-full w-48 h-48 mx-auto flex items-center justify-center border-4 border-current ${colorClass}`}>
@@ -295,7 +304,7 @@ export const ReflectionForm = ({ helpTopics = [], userId }: ReflectionFormProps)
               </div>
               {!userId && (
                 <p className="text-sm text-gray-500 text-center">
-                  会員登録（無料）をすると、このようなサポーターの方々に相談することができます。
+                  会員登録をすると、このようなサポーターの方々に相談することができます。
                 </p>
               )}
             </div>
@@ -315,7 +324,14 @@ export const ReflectionForm = ({ helpTopics = [], userId }: ReflectionFormProps)
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto p-4 md:p-8 space-y-8 bg-white rounded-2xl shadow-2xl border border-gray-100 min-h-[500px] flex flex-col">
+      <div className="max-w-2xl mx-auto p-4 md:p-8 space-y-8 bg-white rounded-2xl shadow-2xl border border-gray-100 min-h-[500px] flex flex-col relative">
+        <button 
+          onClick={() => router.back()}
+          className="absolute top-6 left-6 flex items-center gap-1 text-gray-400 hover:text-gray-600 transition-colors group"
+        >
+          <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
+          <span className="text-sm font-medium">中断する</span>
+        </button>
         <div className="text-center space-y-2 mb-4">
           <h1 className="text-3xl font-bold text-gray-900">リフレクション</h1>
           <p className="text-gray-600">

@@ -20,17 +20,25 @@ export function LoginForm() {
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const onSubmit = async (data: any) => {
         setIsLoading(true);
+        setErrorMessage(null);
         try {
             const result = await submitForm({ email: data.email, password: data.password });
             if (result?.success) {
                 router.push("/home");
+            } else if (result?.error) {
+                if (result.error === "Invalid login credentials") {
+                    setErrorMessage("メールアドレスかパスワードが違います");
+                } else {
+                    setErrorMessage(result.error);
+                }
             }
         } catch (err) {
             console.error(err);
-            alert("ログインに失敗しました。");
+            setErrorMessage("ログインに失敗しました。");
         } finally {
             setIsLoading(false);
         }
@@ -65,7 +73,7 @@ export function LoginForm() {
                                         type="password"
                                         {...methods.register("password", { required: "パスワードは必須です" })}
                                         className="w-full p-4 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all"
-                                        placeholder="••••••••"
+                                        placeholder="パスワードを入力"
                                     />
                                 </FormField>
                             </div>
@@ -81,6 +89,12 @@ export function LoginForm() {
                         </div>
                     </div>
                 </main>
+
+                {errorMessage && (
+                    <div className="px-6 py-3 bg-red-50 border-t border-red-100 text-red-600 text-sm font-medium">
+                        {errorMessage}
+                    </div>
+                )}
 
                 <FormFooter onNext={methods.handleSubmit(onSubmit)} isLastStep={true} isLoading={isLoading} label="ログイン" />
             </form>

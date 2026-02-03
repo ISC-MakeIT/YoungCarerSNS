@@ -75,6 +75,7 @@ export function FormContainer({ masters }: FormContainerProps) {
     }, [currentStepIndex, back, router]);
 
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const onSubmit = async (data: any) => {
         if (!isLastStep) {
@@ -83,14 +84,24 @@ export function FormContainer({ masters }: FormContainerProps) {
         }
 
         setIsLoading(true);
+        setErrorMessage(null);
         try {
             const result = await submitForm(data);
             if (result?.success) {
                 router.push("/home");
+            } else if (result?.error) {
+                const error = result.error.toLowerCase();
+                if (error.includes("rate") && error.includes("limit")) {
+                    setErrorMessage("リクエストが多すぎます。しばらく時間をおいてから再度お試しください。");
+                } else if (error.includes("email") && (error.includes("invalid"))) {
+                    setErrorMessage("メールアドレスの形式が正しくありません。");
+                } else {
+                    setErrorMessage(result.error);
+                }
             }
         } catch (error) {
             console.error(error);
-            alert("予期せぬエラーが発生しました。");
+            setErrorMessage("予期せぬエラーが発生しました。");
         } finally {
             setIsLoading(false);
         }
@@ -112,6 +123,12 @@ export function FormContainer({ masters }: FormContainerProps) {
                         masters={masters}
                     />
                 </main>
+
+                {errorMessage && (
+                    <div className="px-6 py-3 bg-red-50 border-t border-red-100 text-red-600 text-sm font-medium">
+                        {errorMessage}
+                    </div>
+                )}
 
                 <FormFooter 
                     onNext={methods.handleSubmit(onSubmit)}

@@ -129,9 +129,6 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            <footer className="py-12 text-center text-slate-400 text-sm bg-white">
-                <p>&copy; 2026 Family Care Connect</p>
-            </footer>
         </div>
     )
 }

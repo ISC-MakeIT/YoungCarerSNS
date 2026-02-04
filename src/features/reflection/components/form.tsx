@@ -324,7 +324,7 @@ export const ReflectionForm = ({ helpTopics = [], userId }: ReflectionFormProps)
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto p-4 md:p-8 space-y-8 bg-white rounded-2xl shadow-2xl border border-gray-100 min-h-[500px] flex flex-col relative">
+      <div className="max-w-2xl mx-auto p-8 space-y-8 bg-white rounded-2xl shadow-2xl border border-gray-100 min-h-[500px] flex flex-col relative">
         <button 
           onClick={() => router.back()}
           className="absolute top-6 left-6 flex items-center gap-1 text-gray-400 hover:text-gray-600 transition-colors group"

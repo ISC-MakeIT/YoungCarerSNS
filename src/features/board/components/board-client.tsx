@@ -7,6 +7,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { sendBoard } from "../actions/send-board";
 import { createClient } from "@/lib/supabase/client";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface BoardItem {
   id: number;
@@ -29,6 +30,7 @@ export default function BoardClient({ initialPosts }: BoardClientProps) {
   const [posts, setPosts] = useState<BoardItem[]>(initialPosts);
   const [content, setContent] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [isFormOpen, setIsFormOpen] = useState(true);
 
   // Propが更新されたらStateも同期する
   useEffect(() => {
@@ -110,24 +112,39 @@ export default function BoardClient({ initialPosts }: BoardClientProps) {
   return (
     <div className="max-w-2xl mx-auto pb-20">
       {/* 投稿フォーム */}
-      <div className="bg-white p-4 border-b border-gray-100 sticky top-0 z-10 shadow-sm">
+      <div className={`bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm ${isFormOpen ? "p-4" : "p-1"}`}>
         <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="いまどうしてる？"
-            className="w-full p-3 bg-gray-50 border-none rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 resize-none min-h-[100px]"
-            maxLength={280}
-          />
-          <div className="flex justify-end items-center space-x-4">
-            <span className="text-xs text-gray-400">{content.length}/280</span>
+          {isFormOpen && (
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="いまどうしてる？"
+              className="w-full p-3 bg-gray-50 border-none rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 resize-none min-h-[100px]"
+              maxLength={280}
+            />
+          )}
+          <div className="flex items-center relative min-h-[40px]">
+            {isFormOpen && (
+              <span className="text-xs text-gray-400 absolute left-0">{content.length}/280</span>
+            )}
+            
             <button
-              type="submit"
-              disabled={!content.trim() || isPending}
-              className="px-6 py-2 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 transition-colors disabled:bg-gray-300"
+              type="button"
+              onClick={() => setIsFormOpen(!isFormOpen)}
+              className="mx-auto p-1 hover:bg-gray-100 rounded-full transition-colors text-gray-500"
             >
-              {isPending ? "投稿中..." : "投稿する"}
+              {isFormOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
             </button>
+
+            {isFormOpen && (
+              <button
+                type="submit"
+                disabled={!content.trim() || isPending}
+                className="absolute right-0 px-6 py-2 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 transition-colors disabled:bg-gray-300"
+              >
+                {isPending ? "投稿中..." : "投稿する"}
+              </button>
+            )}
           </div>
         </form>
       </div>

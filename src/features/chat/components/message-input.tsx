@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Send, CalendarDays } from "lucide-react";
 import { RequestPopup } from "../../support/components/popup";
 
@@ -24,6 +24,16 @@ export function MessageInput({
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // 入力値に応じて高さを調整（送信後のリセットも含む）
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
+    }
+  }, [inputValue]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,13 +72,9 @@ export function MessageInput({
         )}
         <div className="flex-1 bg-gray-100 rounded-2xl flex items-end px-3 py-1">
           <textarea
+            ref={textareaRef}
             value={inputValue}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-              // 自動で高さを調整する簡易的なロジック
-              e.target.style.height = 'auto';
-              e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
-            }}
+            onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => {
               // Shift+Enterは改行、Enterのみは送信
               if (e.key === 'Enter' && !e.shiftKey) {

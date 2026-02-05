@@ -60,14 +60,28 @@ export function MessageInput({
             <span className="text-[10px] font-bold mt-0.5">依頼</span>
           </button>
         )}
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="メッセージを入力..."
-          className="flex-1 bg-gray-100 border-none rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-          disabled={isSending}
-        />
+        <div className="flex-1 bg-gray-100 rounded-2xl flex items-end px-3 py-1">
+          <textarea
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              // 自動で高さを調整する簡易的なロジック
+              e.target.style.height = 'auto';
+              e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+            }}
+            onKeyDown={(e) => {
+              // Shift+Enterは改行、Enterのみは送信
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e as any);
+              }
+            }}
+            placeholder="メッセージを入力..."
+            className="w-full bg-transparent border-none py-1.5 text-sm focus:ring-0 outline-none resize-none max-h-[120px]"
+            disabled={isSending}
+            rows={1}
+          />
+        </div>
         <button
           type="submit"
           disabled={!inputValue.trim() || isSending}

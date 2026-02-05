@@ -51,7 +51,7 @@ export function MessageList({ messages, currentUserId, otherPartyName, scrollRef
                         : "bg-gray-100 text-gray-800 rounded-tl-none"
                     }`}
                   >
-                    {message.content}
+                    <div className="whitespace-pre-wrap break-words">{message.content}</div>
                   </div>
                 )}
                 <p className={`text-[10px] text-gray-400 mt-1 ${isMine ? "text-right mr-1" : "ml-1"}`}>

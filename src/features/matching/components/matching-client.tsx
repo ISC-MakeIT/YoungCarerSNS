@@ -197,7 +197,7 @@ export default function MatchingClient({
 
                   {expandedId === profile.id && (
                     <div className="mt-4 pt-4 border-t border-gray-100 animate-in fade-in slide-in-from-top-1">
-                      <p className="text-sm text-gray-700 leading-relaxed">
+                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
                         {profile.bio || "自己紹介はまだありません。"}
                       </p>
                       {!(currentUserRole === "supporter" && profile.role === "carer") && (

@@ -22,7 +22,10 @@ export default async function BoardPage() {
       profiles (
         display_name,
         role,
-        icon_url
+        icon_url,
+        user_activity (
+          last_active_at
+        )
       )
     `)
     .order("created_at", { ascending: false })

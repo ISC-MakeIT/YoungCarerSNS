@@ -29,6 +29,8 @@ export default async function ChatRoom({ roomId }: ChatRoomProps) {
 
   // 相手のプロフィール取得
   const { data: otherProfile } = await getOtherMemberProfile(roomId, user.id);
+  const otherPartyLastActiveAt = (otherProfile as any)?.user_activity?.last_active_at || 
+                                (Array.isArray((otherProfile as any)?.user_activity) ? (otherProfile as any).user_activity[0]?.last_active_at : null);
 
   // 初期メッセージの取得
   const { data: messages } = await getMessages(roomId);
@@ -38,7 +40,11 @@ export default async function ChatRoom({ roomId }: ChatRoomProps) {
 
   return (
     <>
-      <SetTitle title={otherProfile?.display_name || "チャット"} />
+      <SetTitle 
+        title={otherProfile?.display_name || "チャット"} 
+        userId={otherProfile?.id}
+        lastActiveAt={otherPartyLastActiveAt}
+      />
       <ChatClient 
         roomId={roomId}
         initialMessages={messages || []}

@@ -246,6 +246,20 @@ export interface Database {
           sort_order?: number | null
         }
       }
+      user_activity: {
+        Row: {
+          user_id: string
+          last_active_at: string
+        }
+        Insert: {
+          user_id: string
+          last_active_at?: string
+        }
+        Update: {
+          user_id?: string
+          last_active_at?: string
+        }
+      }
     }
   }
 }

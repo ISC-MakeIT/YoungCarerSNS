@@ -4,6 +4,7 @@ import { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/ui/avatar";
+import { AvatarWithStatus } from "@/components/ui/avatar-with-status";
 import { Badge } from "@/components/ui/badge";
 import { sendBoard } from "../actions/send-board";
 import { createClient } from "@/lib/supabase/client";
@@ -18,6 +19,11 @@ interface BoardItem {
     display_name: string | null;
     role: "carer" | "supporter" | null;
     icon_url: string | null;
+    user_activity?: {
+      last_active_at: string;
+    } | {
+      last_active_at: string;
+    }[] | null;
   } | null;
 }
 
@@ -62,7 +68,10 @@ export default function BoardClient({ initialPosts }: BoardClientProps) {
               profiles (
                 display_name,
                 role,
-                icon_url
+                icon_url,
+                user_activity (
+                  last_active_at
+                )
               )
             `)
             .eq("id", payload.new.id)
@@ -151,32 +160,41 @@ export default function BoardClient({ initialPosts }: BoardClientProps) {
 
       {/* 投稿一覧 */}
       <div className="divide-y divide-gray-100">
-        {posts.map((post) => (
-          <div key={post.id} className="p-4 bg-white hover:bg-gray-50 transition-colors flex space-x-3">
-            <Link href={`/profile/${post.user_id}`}>
-              <Avatar className="w-12 h-12 hover:opacity-80 transition-opacity" />
-            </Link>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-2 mb-1">
-                <Link href={`/profile/${post.user_id}`} className="hover:underline flex items-center space-x-1">
-                  <span className="font-bold text-gray-900 truncate max-w-[150px]">
-                    {post.profiles?.display_name || "匿名ユーザー"}
+        {posts.map((post) => {
+          const lastActiveAt = (post.profiles?.user_activity as any)?.last_active_at || 
+                              (Array.isArray(post.profiles?.user_activity) ? post.profiles.user_activity[0]?.last_active_at : null);
+          
+          return (
+            <div key={post.id} className="p-4 bg-white hover:bg-gray-50 transition-colors flex space-x-3">
+              <Link href={`/profile/${post.user_id}`}>
+                <AvatarWithStatus 
+                  userId={post.user_id} 
+                  initialLastActiveAt={lastActiveAt}
+                  className="w-12 h-12 hover:opacity-80 transition-opacity" 
+                />
+              </Link>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center space-x-2 mb-1">
+                  <Link href={`/profile/${post.user_id}`} className="hover:underline flex items-center space-x-1">
+                    <span className="font-bold text-gray-900 truncate max-w-[150px]">
+                      {post.profiles?.display_name || "匿名ユーザー"}
+                    </span>
+                    <Badge variant={post.profiles?.role === "supporter" ? "primary" : "default"}>
+                      {post.profiles?.role === "supporter" ? "サポーター" : "一般"}
+                    </Badge>
+                  </Link>
+                  <span className="text-gray-500 text-xs">·</span>
+                  <span className="text-gray-500 text-xs whitespace-nowrap">
+                    {formatTime(post.created_at)}
                   </span>
-                  <Badge variant={post.profiles?.role === "supporter" ? "primary" : "default"}>
-                    {post.profiles?.role === "supporter" ? "サポーター" : "一般"}
-                  </Badge>
-                </Link>
-                <span className="text-gray-500 text-xs">·</span>
-                <span className="text-gray-500 text-xs whitespace-nowrap">
-                  {formatTime(post.created_at)}
-                </span>
+                </div>
+                <p className="text-gray-800 text-sm whitespace-pre-wrap break-words leading-relaxed">
+                  {post.content}
+                </p>
               </div>
-              <p className="text-gray-800 text-sm whitespace-pre-wrap break-words leading-relaxed">
-                {post.content}
-              </p>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {posts.length === 0 && (
           <div className="p-10 text-center text-gray-500 text-sm">

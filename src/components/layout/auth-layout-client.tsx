@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { Home, Users, MessageCircle, MessageSquare } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { useTitle } from "./title-context";
+import { createClient } from "@/lib/supabase/client";
+import { OnlineStatusBadge } from "@/features/profile/components/online-status-badge";
 
 export default function AuthLayoutClient({
   children,
@@ -15,9 +17,34 @@ export default function AuthLayoutClient({
   userId?: string;
 }) {
   const pathname = usePathname();
-  const { title, setTitle } = useTitle();
+  const { titleData, setTitle } = useTitle();
 
   const isChatRoom = pathname?.includes("/chat/") && pathname !== "/chat";
+
+  // Presenceの定期更新（自分がオンラインであることを他人に知らせる）
+  useEffect(() => {
+    if (!userId) return;
+
+    const supabase = createClient();
+    const channel = supabase.channel(`presence:${userId}`, {
+      config: {
+        presence: {
+          key: userId,
+        },
+      },
+    });
+
+    channel
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await channel.track({ online_at: new Date().toISOString() });
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId]);
 
   const navItems = [
     { href: "/home", label: "ホーム", icon: Home },
@@ -36,8 +63,16 @@ export default function AuthLayoutClient({
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
-      <header className="flex-none bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-800">{title}</h1>
+      <header className="flex-none bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between min-h-[56px]">
+        <div className="flex flex-col">
+          <h1 className="text-base font-bold text-gray-800 leading-tight">{titleData.name}</h1>
+          {titleData.userId && (
+            <OnlineStatusBadge 
+              userId={titleData.userId} 
+              initialLastActiveAt={titleData.lastActiveAt} 
+            />
+          )}
+        </div>
         <Link href={userId ? `/profile/${userId}` : "/profile/edit"}>
           <Avatar className="w-8 h-8 pointer-events-none" />
         </Link>

@@ -10,6 +10,7 @@ import { Moon, Star, Cloud, Sun, Sparkles, ArrowRight, ArrowLeft, RefreshCw, Han
 import type { HelpTopicMaster } from "@/features/profile/types"
 import { getPseudoMatchingProfiles } from "@/features/matching/actions/get-pseudo-matching-profiles"
 import { Avatar } from "@/components/ui/avatar"
+import { AvatarWithStatus } from "@/components/ui/avatar-with-status"
 import { Badge } from "@/components/ui/badge"
 
 type FormValues = {
@@ -259,33 +260,43 @@ export const ReflectionForm = ({ helpTopics = [], userId }: ReflectionFormProps)
                 あなたをサポートできるかもしれない人
               </h3>
               <div className="grid gap-3">
-                {matchingProfiles.map((profile) => (
-                  <div key={profile.id} className="p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex flex-col gap-3">
-                    <div className="flex items-center gap-4">
-                      <Link 
-                        href={userId ? `/profile/${profile.id}` : `/register`}
-                        className="flex items-center gap-4 flex-1 hover:opacity-75 transition-opacity"
-                      >
-                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
-                          {profile.icon_url ? (
-                            <img src={profile.icon_url} alt="" className="w-full h-full object-cover" />
+                {matchingProfiles.map((profile) => {
+                  const lastActiveAt = (profile.user_activity as any)?.last_active_at || 
+                                      (Array.isArray(profile.user_activity) ? profile.user_activity[0]?.last_active_at : null);
+                  
+                  return (
+                    <div key={profile.id} className="p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex flex-col gap-3">
+                      <div className="flex items-center gap-4">
+                        <Link 
+                          href={userId ? `/profile/${profile.id}` : `/register`}
+                          className="flex items-center gap-4 flex-1 hover:opacity-75 transition-opacity"
+                        >
+                          {userId ? (
+                            <AvatarWithStatus 
+                              userId={profile.id} 
+                              initialLastActiveAt={lastActiveAt}
+                              src={profile.icon_url}
+                              className="w-12 h-12 flex-shrink-0"
+                            />
                           ) : (
-                            <Avatar className="w-full h-full" />
+                            <Avatar 
+                              src={profile.icon_url}
+                              className="w-12 h-12 flex-shrink-0"
+                            />
                           )}
-                        </div>
-                        <div className="flex-1 text-left">
-                          <div className="font-bold text-gray-900">{profile.display_name}</div>
-                          <div className="text-xs text-gray-500 line-clamp-1">{profile.bio}</div>
-                        </div>
-                      </Link>
-                      <Link 
-                        href={userId ? `/profile/${profile.id}` : `/register`}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
-                      >
-                        <MessageCircle size={20} />
-                      </Link>
-                    </div>
-                    {(profile.help_topics?.length > 0 || profile.help_topic_other) && (
+                          <div className="flex-1 text-left">
+                            <div className="font-bold text-gray-900">{profile.display_name}</div>
+                            <div className="text-xs text-gray-500 line-clamp-1">{profile.bio}</div>
+                          </div>
+                        </Link>
+                        <Link 
+                          href={userId ? `/profile/${profile.id}` : `/register`}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                        >
+                          <MessageCircle size={20} />
+                        </Link>
+                      </div>
+                      {(profile.help_topics?.length > 0 || profile.help_topic_other) && (
                       <div className="flex flex-wrap gap-1">
                         {profile.help_topics?.map((tag: string) => (
                           <Badge key={tag} className="bg-blue-50 text-blue-700 border border-blue-100 text-[10px] py-0 px-2">
@@ -300,9 +311,10 @@ export const ReflectionForm = ({ helpTopics = [], userId }: ReflectionFormProps)
                       </div>
                     )}
                   </div>
-                ))}
-              </div>
-              {!userId && (
+                );
+              })}
+            </div>
+            {!userId && (
                 <p className="text-sm text-gray-500 text-center">
                   会員登録をすると、このようなサポーターの方々に相談することができます。
                 </p>

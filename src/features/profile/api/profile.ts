@@ -7,23 +7,24 @@ export async function getProfile(userId: string) {
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("*, carer_profiles(*), supporter_profiles(*)")
+    .select("*, carer_profiles(*), supporter_profiles(*), user_activity(last_active_at)")
     .eq("id", userId)
     .single();
 
   if (error || !profile) return null;
 
-  const { carer_profiles, supporter_profiles, ...baseProfile } = profile;
+  const { carer_profiles, supporter_profiles, user_activity, ...baseProfile } = profile;
+  const lastActiveAt = (user_activity as any)?.last_active_at;
 
   if (profile.role === 'supporter') {
-    return { ...baseProfile, ...(supporter_profiles as any) };
+    return { ...baseProfile, ...(supporter_profiles as any), last_active_at: lastActiveAt };
   }
 
   if (profile.role === 'carer') {
     const carerProfile = carer_profiles as any;
-    if (!carerProfile) return baseProfile;
+    if (!carerProfile) return { ...baseProfile, last_active_at: lastActiveAt };
 
-    const result = { ...baseProfile, ...carerProfile };
+    const result = { ...baseProfile, ...carerProfile, last_active_at: lastActiveAt };
 
     // 他人のプロフィールの場合は公開設定を適用
     if (!isOwner) {
@@ -65,20 +66,23 @@ export async function getMyProfile() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("*")
+    .select("*, user_activity(last_active_at)")
     .eq("id", user.id)
     .single();
 
   if (!profile) return null;
 
+  const { user_activity, ...baseProfile } = profile;
+  const lastActiveAt = (user_activity as any)?.last_active_at;
+
   let roleSpecific = null;
-  if (profile.role === 'carer') {
+  if (baseProfile.role === 'carer') {
     const { data } = await supabase.from('carer_profiles').select('*').eq('user_id', user.id).single();
     roleSpecific = data;
-  } else if (profile.role === 'supporter') {
+  } else if (baseProfile.role === 'supporter') {
     const { data } = await supabase.from('supporter_profiles').select('*').eq('user_id', user.id).single();
     roleSpecific = data;
   }
 
-  return { ...profile, ...roleSpecific };
+  return { ...baseProfile, ...roleSpecific, last_active_at: lastActiveAt };
 }

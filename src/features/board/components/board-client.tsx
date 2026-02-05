@@ -175,16 +175,16 @@ export default function BoardClient({ initialPosts }: BoardClientProps) {
               </Link>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-2 mb-1">
-                  <Link href={`/profile/${post.user_id}`} className="hover:underline flex items-center space-x-1">
-                    <span className="font-bold text-gray-900 truncate max-w-[150px]">
+                  <Link href={`/profile/${post.user_id}`} className="hover:underline flex items-center space-x-1 min-w-0">
+                    <span className="font-bold text-gray-900 truncate">
                       {post.profiles?.display_name || "匿名ユーザー"}
                     </span>
-                    <Badge variant={post.profiles?.role === "supporter" ? "primary" : "default"}>
+                    <Badge variant={post.profiles?.role === "supporter" ? "primary" : "default"} className="shrink-0">
                       {post.profiles?.role === "supporter" ? "サポーター" : "一般"}
                     </Badge>
                   </Link>
-                  <span className="text-gray-500 text-xs">·</span>
-                  <span className="text-gray-500 text-xs whitespace-nowrap">
+                  <span className="text-gray-500 text-xs shrink-0">·</span>
+                  <span className="text-gray-500 text-xs whitespace-nowrap shrink-0">
                     {formatTime(post.created_at)}
                   </span>
                 </div>

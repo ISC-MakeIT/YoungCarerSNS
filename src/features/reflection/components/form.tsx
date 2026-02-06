@@ -207,7 +207,7 @@ export const ReflectionForm = ({ helpTopics = [], userId }: ReflectionFormProps)
     let MarkIcon = Sparkles
     let markText = "✨ きらきらマーク"
     let colorClass = "text-pink-500"
-    let feedback = "あなたは家事やお家のことをお手伝いしている優しい方ですね。自分自身の時間も大切にしてください。"
+    let feedback = "ケアと自分の時間のバランスを保てているようです。今の調子で自分も大切にしていきましょう。"
 
     if (result >= 90) {
       MarkIcon = Moon
@@ -228,7 +228,7 @@ export const ReflectionForm = ({ helpTopics = [], userId }: ReflectionFormProps)
       MarkIcon = Sun
       markText = "☀️ 晴れマーク"
       colorClass = "text-orange-400"
-      feedback = "ケアと自分の時間のバランスを保てているようです。今の調子で自分も大切にしていきましょう。"
+      feedback = "あなたは家事やお家のことをお手伝いしている優しい方ですね。自分自身の時間も大切にしてください。"
     }
 
     return (

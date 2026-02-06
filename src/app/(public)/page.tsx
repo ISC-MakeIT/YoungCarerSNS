@@ -20,7 +20,7 @@ export default function LandingPage() {
                     </div>
                     
                     <h1 className="text-4xl md:text-6xl font-bold text-slate-900 leading-tight tracking-tight">
-                        家族のために頑張る、<br className="md:hidden" />
+                        誰かのために頑張る、<br className="md:hidden" />
                         あなたのための。
                     </h1>
                     
@@ -114,7 +114,7 @@ export default function LandingPage() {
                     <div className="bg-slate-50 rounded-3xl p-8 md:p-12 border border-slate-100 space-y-6">
                         <h2 className="text-2xl font-bold text-slate-800">サポーターとして参加する</h2>
                         <p className="text-slate-600 leading-relaxed text-sm">
-                            家族のケアと向き合う若い世代を支えたい、学生サポーターを募集しています。元ケアラーの方や専門的に学んでいる方はもちろん、「自分にできることがあれば」という気持ちのある方も歓迎しています。
+                            大切な人のケアと向き合う若い世代を支えたい、学生サポーターを募集しています。元ケアラーの方や専門的に学んでいる方はもちろん、「自分にできることがあれば」という気持ちのある方も歓迎しています。
                         </p>
                         <div className="pt-2">
                             <Link 

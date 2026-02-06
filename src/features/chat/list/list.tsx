@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
+import { AvatarWithStatus } from "@/components/ui/avatar-with-status";
 import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -21,6 +22,8 @@ export default async function ChatList() {
   const chatListData = await Promise.all(roomIds.map(async (roomId) => {
     // 相手のプロフィールを取得
     const { data: profile } = await getOtherMemberProfile(roomId, user.id);
+    const lastActiveAt = (profile as any)?.user_activity?.last_active_at || 
+                       (Array.isArray((profile as any)?.user_activity) ? (profile as any).user_activity[0]?.last_active_at : null);
 
     // 最新メッセージを取得
     const { data: lastMessage } = await getLastMessage(roomId);
@@ -41,6 +44,8 @@ export default async function ChatList() {
 
     return {
       id: roomId,
+      userId: profile?.id,
+      lastActiveAt,
       name: profile?.display_name || "匿名ユーザー",
       lastMessage: displayLastMessage,
       time: lastMessage ? new Date(lastMessage.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
@@ -72,9 +77,17 @@ export default async function ChatList() {
                 className="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 active:bg-gray-100 transition-colors"
               >
                 <div className="relative">
-                  <Avatar className="w-12 h-12" />
+                  {chat.userId ? (
+                    <AvatarWithStatus 
+                      userId={chat.userId} 
+                      initialLastActiveAt={chat.lastActiveAt}
+                      className="w-12 h-12"
+                    />
+                  ) : (
+                    <Avatar className="w-12 h-12" />
+                  )}
                   {chat.unread > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white z-10">
                       {chat.unread}
                     </span>
                   )}

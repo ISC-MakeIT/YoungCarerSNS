@@ -123,13 +123,12 @@ export function RequestPopup({ onClose, supporterName, roomId, carerId, supporte
                 <label className="block text-sm font-bold text-gray-700 mb-1">
                   ひとこと (任意)
                 </label>
-                <input
-                  type="text"
+                <textarea
                   name="note"
                   value={formData.note}
                   onChange={handleChange}
                   placeholder="メッセージがあれば入力してください"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none resize-none h-24"
                 />
               </div>
 
@@ -162,7 +161,7 @@ export function RequestPopup({ onClose, supporterName, roomId, carerId, supporte
                 {formData.note && (
                   <div>
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">ひとこと</h4>
-                    <p className="text-gray-900 mt-1">{formData.note}</p>
+                    <p className="text-gray-900 mt-1 whitespace-pre-wrap">{formData.note}</p>
                   </div>
                 )}
               </div>

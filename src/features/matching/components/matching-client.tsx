@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
+import { AvatarWithStatus } from "@/components/ui/avatar-with-status";
 import { Badge } from "@/components/ui/badge";
+import { OnlineStatusBadge } from "../../profile/components/online-status-badge";
 import { startChat } from "../actions/start-chat";
 import { getFilteredProfiles } from "../actions/get-filtered-profiles";
 import type { HelpTopicMaster, ChatStanceMaster } from "../../profile/types";
@@ -21,6 +23,7 @@ interface Profile {
   help_topics: string[] | null;
   help_topic_other: string | null;
   chat_stances: string[] | null;
+  last_active_at?: string | null;
 }
 
 interface MatchingClientProps {
@@ -151,12 +154,18 @@ export default function MatchingClient({
             >
               <div className="p-4 flex items-start space-x-3">
                 <Link href={`/profile/${profile.id}`}>
-                  <Avatar className="w-12 h-12 hover:opacity-80 transition-opacity" />
+                  <AvatarWithStatus 
+                    userId={profile.id} 
+                    initialLastActiveAt={profile.last_active_at}
+                    className="w-12 h-12 hover:opacity-80 transition-opacity" 
+                  />
                 </Link>
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
-                    <Link href={`/profile/${profile.id}`} className="hover:underline">
-                      <h3 className="font-bold text-gray-900">{profile.display_name || "匿名ユーザー"}</h3>
+                    <Link href={`/profile/${profile.id}`} className="hover:underline flex-1">
+                      <div className="flex items-center space-x-2">
+                        <h3 className="font-bold text-gray-900">{profile.display_name || "匿名ユーザー"}</h3>
+                      </div>
                       <p className="text-xs text-gray-500">
                         {profile.role === "carer" ? "一般" : "サポーター"} / {profile.prefecture || "地域未設定"}{profile.city && ` ${profile.city}`}
                       </p>
@@ -188,7 +197,7 @@ export default function MatchingClient({
 
                   {expandedId === profile.id && (
                     <div className="mt-4 pt-4 border-t border-gray-100 animate-in fade-in slide-in-from-top-1">
-                      <p className="text-sm text-gray-700 leading-relaxed">
+                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
                         {profile.bio || "自己紹介はまだありません。"}
                       </p>
                       {!(currentUserRole === "supporter" && profile.role === "carer") && (

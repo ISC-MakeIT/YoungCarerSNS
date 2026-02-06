@@ -32,7 +32,7 @@ export function MessageList({ messages, currentUserId, otherPartyName, scrollRef
                   <Avatar className="w-8 h-8" />
                 </div>
               )}
-              <div className={isSupport ? "flex-1 min-w-[300px]" : ""}>
+              <div className={`${isSupport ? "flex-1 min-w-[280px]" : "flex flex-col"} ${isMine ? "items-end" : "items-start"}`}>
                 {!isMine && (
                   <p className="text-[10px] text-gray-500 mb-1 ml-1">{otherPartyName}</p>
                 )}
@@ -45,13 +45,13 @@ export function MessageList({ messages, currentUserId, otherPartyName, scrollRef
                   />
                 ) : (
                   <div
-                    className={`px-4 py-2 rounded-2xl text-sm ${
+                    className={`px-4 py-2 rounded-2xl text-sm w-fit ${
                       isMine
                         ? "bg-blue-600 text-white rounded-tr-none"
                         : "bg-gray-100 text-gray-800 rounded-tl-none"
                     }`}
                   >
-                    {message.content}
+                    <div className="whitespace-pre-wrap break-words">{message.content}</div>
                   </div>
                 )}
                 <p className={`text-[10px] text-gray-400 mt-1 ${isMine ? "text-right mr-1" : "ml-1"}`}>

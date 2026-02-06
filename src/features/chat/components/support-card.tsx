@@ -171,7 +171,7 @@ export function SupportCard({ support, isMine, roomId, currentUserId }: SupportC
       <div className="space-y-3">
         <div>
           <p className="text-[10px] font-bold opacity-60 mb-0.5 uppercase">お願いしたいこと</p>
-          <p className="font-medium bg-white/50 p-2 rounded-lg break-words">
+          <p className="font-medium bg-white/50 p-2 rounded-lg break-words whitespace-pre-wrap">
             {support.request_body}
           </p>
         </div>
@@ -187,7 +187,7 @@ export function SupportCard({ support, isMine, roomId, currentUserId }: SupportC
         {support.request_note && (
           <div>
             <p className="text-[10px] font-bold opacity-60 mb-0.5 uppercase">追記・備考</p>
-            <p className="p-2 border border-current/10 rounded-lg text-xs italic">
+            <p className="p-2 border border-current/10 rounded-lg text-xs italic whitespace-pre-wrap">
               {support.request_note}
             </p>
           </div>

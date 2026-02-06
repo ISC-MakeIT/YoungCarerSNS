@@ -4,7 +4,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { MapPin, MessageCircle, Edit, ChevronDown, ChevronUp } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
+import { AvatarWithStatus } from "@/components/ui/avatar-with-status";
 import { Badge } from "@/components/ui/badge";
+import { OnlineStatusBadge } from "./online-status-badge";
+import { useOnlineStatus } from "../hooks/use-online-status";
 import { startChat } from "../../matching/actions/start-chat";
 import { logout } from "../actions/logout";
 import type { HelpTopicMaster, ChatStanceMaster } from "../types";
@@ -70,7 +73,13 @@ export default function UserProfile({
       <div className="bg-white p-6 border-b border-gray-100 flex flex-col items-center">
         <Avatar className="w-24 h-24 mb-4" />
         <h2 className="text-xl font-bold text-gray-900">{profile.display_name || "匿名ユーザー"}</h2>
-        <div className="flex items-center text-sm text-gray-500 mt-1">
+        <div className="mt-1">
+          <OnlineStatusBadge 
+            userId={profile.id} 
+            initialLastActiveAt={profile.last_active_at}
+          />
+        </div>
+        <div className="flex items-center text-sm text-gray-500 mt-2">
           <Badge className="mr-2" variant={profile.role === "supporter" ? "primary" : "default"}>
             {profile.role === "supporter" ? "サポーター" : "一般"}
           </Badge>

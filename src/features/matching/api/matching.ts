@@ -15,7 +15,7 @@ export async function getMatchingProfiles(
   
   let q = supabase
     .from("profiles")
-    .select("*, carer_profiles(*)")
+    .select("*, carer_profiles(*), user_activity(last_active_at)")
     .neq("id", userId);
 
   if (role && role !== "all") {
@@ -78,7 +78,10 @@ export async function getMatchingProfiles(
       matchCount += profile.chat_stances.filter((s: string) => stances.includes(s)).length;
     }
 
-    return { ...profile, matchCount };
+    const lastActiveAt = (profile as any).user_activity?.last_active_at || 
+                       (Array.isArray((profile as any).user_activity) ? (profile as any).user_activity[0]?.last_active_at : null);
+
+    return { ...profile, matchCount, last_active_at: lastActiveAt };
   });
 
   // 一致件数ごとにグループ化

@@ -16,7 +16,7 @@ export async function getPseudoMatchingProfiles(topics: string[]) {
   
   const { data, error } = await supabase
     .from("profiles")
-    .select("*, carer_profiles(*)")
+    .select("*, carer_profiles(*), user_activity(last_active_at)")
     .eq("role", "supporter")
     .overlaps("help_topics", topics)
     .limit(3);

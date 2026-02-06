@@ -64,8 +64,8 @@ export default function AuthLayoutClient({
   return (
     <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
       <header className="flex-none bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between min-h-[56px]">
-        <div className="flex flex-col">
-          <h1 className="text-base font-bold text-gray-800 leading-tight">{titleData.name}</h1>
+        <div className="flex flex-col min-w-0 flex-1 mr-2">
+          <h1 className="text-base font-bold text-gray-800 leading-tight truncate">{titleData.name}</h1>
           {titleData.userId && (
             <OnlineStatusBadge 
               userId={titleData.userId} 
@@ -73,7 +73,7 @@ export default function AuthLayoutClient({
             />
           )}
         </div>
-        <Link href={userId ? `/profile/${userId}` : "/profile/edit"}>
+        <Link href={userId ? `/profile/${userId}` : "/profile/edit"} className="shrink-0">
           <Avatar className="w-8 h-8 pointer-events-none" />
         </Link>
       </header>
